@@ -22,7 +22,7 @@ $app->addRoutingMiddleware();
  */
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
-include_once __DIR__ . '/../router/web.php';
+include_once __DIR__ . '/../src/Router/web.php';
 // include_once('/../router/web/php');
 
 $app->run();
