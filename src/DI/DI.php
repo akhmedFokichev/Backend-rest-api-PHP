@@ -1,6 +1,4 @@
 <?php
-require_once('../config/Config.php');
-require_once('../src/Service/DataBase.php');
 
 class DI {
 	public Config $config;

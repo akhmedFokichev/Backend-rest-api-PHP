@@ -1,19 +1,19 @@
 <?php
-
 class Database
 {
-    // укажите свои учетные данные базы данных
-    private Config $config;
-    
-    private $host = $config->host;
-    private $db_name = $config->host;
-    private $username = $config->username;
-    private $password = $config->password;
-    
     public $conn;
 
+    // укажите свои учетные данные базы данных
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
+    
     public function __construct(Config $config) {
-        $this->config = $config;
+        $this->host = $config->host;
+        $this->db_name = $config->db_name;
+        $this->username = $config->username;
+        $this->password = $config->password;
     }
 
     // получаем соединение с БД

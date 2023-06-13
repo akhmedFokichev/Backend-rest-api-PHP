@@ -9,7 +9,8 @@ use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-require __DIR__ . '/../src/DI/DI.php'; 
+require __DIR__ . '/../config/autoload.php';
+
 
 $di = new DI();
 
@@ -22,5 +23,7 @@ $app->addRoutingMiddleware();
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
 include_once __DIR__ . '/../src/Router/Router.php';
+
+$app->add(new RequestValidMiddleware());
 
 $app->run();
