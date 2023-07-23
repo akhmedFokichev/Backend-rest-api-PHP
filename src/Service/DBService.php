@@ -1,7 +1,7 @@
 <?php
-class Database
+class DBService
 {
-    public $conn;
+    private $conn;
 
     // укажите свои учетные данные базы данных
     private $host;
@@ -17,8 +17,7 @@ class Database
     }
 
     // получаем соединение с БД
-    public function getConnection()
-    {
+    public function getConnection() {
         $this->conn = null;
 
         try {
@@ -29,5 +28,18 @@ class Database
         }
 
         return $this->conn;
+    }
+    
+    
+    public function executeSql($sql) {
+    	
+    //	var_dump($sql);
+    //	echo "<br>";
+			
+		if ($this->conn->query($sql) === TRUE) {
+			return true;
+		} else {
+			return false;
+		}
     }
 }

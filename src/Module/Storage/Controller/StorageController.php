@@ -16,8 +16,25 @@ class StorageController
         $this->container = $container;
     }*/
 
-    public function home(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
-    {
+    public function home(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
+        // your code to access items in the container... $this->container->get('');
+	
+		global $di;
+		var_dump($di);
+		
+        return $response;
+    }
+    
+     public function add(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
+        // your code to access items in the container... $this->container->get('');
+	
+		global $di;
+		var_dump($di);
+		
+        return $response;
+    }
+    
+     public function getImage(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
         // your code to access items in the container... $this->container->get('');
 	
 		global $di;
