@@ -9,31 +9,27 @@ class AuthMiddleware {
   	
     global $di;
     $identityService = $di->identityService;
-      
+    	
     $response = $handler->handle($request);
+    $route = $request->getUri()->getPath();
     	
-        
-    	$contentType = $request->getHeaderLine('Content-Type');
-    	if ($contentType != 'application/json') {
-    		$response = new Response();
-        	$response->getBody()->write('неизвестный формат данных');
-    		return $response->withStatus(400);
-    	}
-    	
-    	
-    	$route = $request->getUri()->getPath();
-    	if ($route == '/identity/login/') {
-    		return $response;
-    	}
-    	
+		// пропускаем авториазция в  identity
+    	if (str_contains($route, '/identity/')) {
+			return $response;
+		}
+		
     	
     	$authorization = $request->getHeaderLine('Authorization');
     	$person = $identityService->auth($authorization);
+    	
     	if (is_null($person)) {
     	    $response = new Response();
         	$response->getBody()->write('нет доступа');
     		return $response->withStatus(401);		
     	}
+    	
+    	
+
     	
 
         // $response = new Response();

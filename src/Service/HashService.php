@@ -8,13 +8,14 @@ class HashService {
         $this->hashKey = $config->hashKey;
     }
     
-    public function hash($string) {
-	
-		$pwd_peppered = hash_hmac("sha256", $string, $this->hashKey);
-	
-		$pwd_hashed = password_hash($pwd_peppered, PASSWORD_BCRYPT);
-	
-		return $pwd_hashed;
+    public function hash($value) {
+		
+		// TODO починить работу  password_hash + options
+		// $cost = $this->hashKey;
+		
+		$hash = password_hash($value, PASSWORD_BCRYPT);
 
-	 }
+		return $hash;
+	}
+	
 }

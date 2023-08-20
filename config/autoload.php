@@ -21,6 +21,7 @@ require_once('../src/Middleware/AuthMiddleware.php');
 
 
 //Model
-require_once('../src/Model/ResponsError.php');
+require_once('../src/Model/ResponseError.php');
+require_once('../src/Model/Token.php');
 require_once('../src/Model/Person.php');
 require_once('../src/Model/Profile.php');

@@ -1,6 +1,6 @@
 <?php
 
-class ResponsError {
+class ResponseError {
 	
 	// public $code;
 	// public $errorTitle;

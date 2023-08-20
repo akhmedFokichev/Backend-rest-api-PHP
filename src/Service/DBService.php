@@ -32,14 +32,32 @@ class DBService
     
     
     public function executeSql($sql) {
-    	
     //	var_dump($sql);
     //	echo "<br>";
-			
-		if ($this->conn->query($sql) === TRUE) {
+		$result = $this->conn->query($sql);
+
+		if ($result === TRUE) {
 			return true;
 		} else {
 			return false;
 		}
     }
+    
+    public function getObjects($sql) {
+		$objects = $this->objects($sql);
+		return $objects;
+    }
+    
+    public function getObject($sql) {
+		$objects = $this->objects($sql);
+       return reset($objects);
+    }
+    
+    private function objects($sql) {
+    	$stm = $this->conn->prepare($sql);
+		$stm->execute();
+		$objects = $stm->fetchAll();
+		return $objects;
+    }
+    
 }

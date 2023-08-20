@@ -25,9 +25,8 @@ $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 include_once __DIR__ . '/../src/Router/Router.php';
 
 
-$app->add(new AuthMiddleware());
-
 $app->add(new RequestValidMiddleware());
 
+$app->add(new AuthMiddleware());
 
 $app->run();

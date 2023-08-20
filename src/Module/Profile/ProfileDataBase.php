@@ -1,7 +1,7 @@
 <?php
 
 
-class IdentityDataBase {
+class ProfileDataBase {
 	
 	protected $dbService;
 		
@@ -16,12 +16,6 @@ class IdentityDataBase {
     
     public function addUser($access_level, $login, $pass_hash) {
       	$sql = "INSERT INTO `identity_users`(`access_level`, `login`, `pass_hash`, `created_at`, `updated_at`) VALUES ($access_level,'$login','$pass_hash',now(), now())";
-
-		$this->dbService->executeSql($sql);
-    }
-    
-    public function addSession($userId, $accessToken, $refreshToken, $expiresIn, $clientId, $secretKey) {
-		$sql = "INSERT INTO `identity_session`(`user_id`, `access_token`, `refresh_token`, `expiresIn`, `client_id`, `secret_key`,`updated_at`, `created_at`) VALUES ($userId,'$accessToken','$refreshToken', $expiresIn, '$clientId', '$secretKey', now(), now())";
 
 		$this->dbService->executeSql($sql);
     }

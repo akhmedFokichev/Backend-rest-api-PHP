@@ -9,45 +9,73 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class IdentityController {
 
-	private \HashService $hashService;
 	private \IdentityService $identityService;
 
+	private \Profile $profile;
 	// init
     public function __construct() {
       global $di;
-
-      $this->hashService = $di->hashService;
       $this->identityService = $di->identityService;
 	}
 	
 
 	// public
-    public function login(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
+	
+	public function registration(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
         global $di;
         
-        $this->identityService->login();
-        
-        $parsedBody = $request->getBody()->getContents();
-        
-        $json = json_decode($parsedBody);
-        
-		// $this->authLogin('aaaaa', 'ssssss');
-		
-		// var_dump($json->login);
-		
-	$profile = new \Profile();
-		
-	 $payload = json_encode($profile->toJson());
-
-	 $response->getBody()->write($payload);
+      $parsedBody = $request->getBody()->getContents();
+      $body = json_decode($parsedBody);
+     
+      $token = $this->identityService->registration($body->secret_key, $body->client_id, $body->login, $body->password);
+      
+	 if ($token == null) {
+    	$responseError = new \ResponseError(403, "Нет доступа!", "такой логин уже существует!"); 	
+    	$responseJson = json_encode($responseError->toJson());
+		$response->getBody()->write($responseJson);
+	 
+      return $response
+	   ->withHeader('Content-Type', 'application/json')
+	   ->withStatus(403);
+     }
+     
+     
+	 $responseJson = json_encode($token->toJson());
+	 $response->getBody()->write($responseJson);
 	
 	 return $response
 	 ->withHeader('Content-Type', 'application/json')
-	 ->withStatus(400);
-	 
+	 ->withStatus(200);
     }
     
-    public function add(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
+	
+    public function login(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
+    	
+     $parsedBody = $request->getBody()->getContents();
+     $body = json_decode($parsedBody);
+        
+     $token = $this->identityService->login($body->secret_key, $body->client_id, $body->login, $body->password);
+     
+     if ($token == null) {
+    	$responseError = new \ResponseError(403, "Нет доступа!", "Логин или пароль неверный!"); 	
+    	$responseJson = json_encode($responseError->toJson());
+		$response->getBody()->write($responseJson);
+	 
+      return $response
+	 ->withHeader('Content-Type', 'application/json')
+	 ->withStatus(401);
+     }
+        
+		
+	 $responseJson = json_encode($token->toJson());
+	 $response->getBody()->write($responseJson);
+	
+	 return $response
+	 ->withHeader('Content-Type', 'application/json')
+	 ->withStatus(200);
+    }
+    
+    public function create(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
         global $di;
         
 		$this->authLogin('aaaaa', 'ssssss');

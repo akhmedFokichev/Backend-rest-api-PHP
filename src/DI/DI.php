@@ -4,6 +4,7 @@ class DI {
 	public Config $config;
 	
 	public DBService $dbService;
+	
 	public HashService $hashService;
 	public IdentityService $identityService;
 	
@@ -11,7 +12,8 @@ class DI {
 		$this->config = new Config();
 		$this->dbService = new DBService($this->config);
 		$this->hashService = new HashService($this->config);
-		$this->identityService = new IdentityService($this->dbService);
+		
+		$this->identityService = new IdentityService();
     }
     
     public function initialization() {

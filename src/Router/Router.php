@@ -12,9 +12,10 @@ $app->get('/', \App\Module\Identity\IdentityController::class . ':login');
 
 // Identity
 
+$app->put('/identity/registration', \App\Module\Identity\IdentityController::class . ':registration');
+
 $app->post('/identity/login', \App\Module\Identity\IdentityController::class . ':login');
 
-$app->post('/identity/add', \App\Module\Identity\IdentityController::class . ':add');
 
 $app->post('identity/delete', \App\Module\Identity\IdentityController::class . ':delete');
 
