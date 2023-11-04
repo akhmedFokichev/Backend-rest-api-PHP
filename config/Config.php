@@ -2,6 +2,10 @@
 
 class Config
 {
+    // Info
+    public $appName = "Puma";
+    public $version = "0.0.1";
+
 	// identity 
 	public $hashKey = "testKey";
     public $clientIds = ["web_app"];

@@ -21,6 +21,23 @@ class IdentityController {
 
 	// public
 	
+	public function info(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
+        global $di;
+    
+		$appName = $di->config->appName;
+		$version = $di->config->version;
+
+		$data = '{"app":"'.$appName.'","version":"'.$version.'"}';
+		//$json = json_decode($data, true);
+		
+		$response->getBody()->write($data);
+
+		return $response
+		->withHeader('Content-Type', 'application/json')
+		->withStatus(200);
+	}
+
+
 	public function registration(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
         global $di;
         

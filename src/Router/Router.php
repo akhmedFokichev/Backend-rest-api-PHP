@@ -8,14 +8,13 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  * @var App $app
  */
 
-$app->get('/', \App\Module\Identity\IdentityController::class . ':login');
+$app->get('/', \App\Module\Identity\IdentityController::class . ':info');
 
 // Identity
 
 $app->put('/identity/registration', \App\Module\Identity\IdentityController::class . ':registration');
 
 $app->post('/identity/login', \App\Module\Identity\IdentityController::class . ':login');
-
 
 $app->post('identity/delete', \App\Module\Identity\IdentityController::class . ':delete');
 

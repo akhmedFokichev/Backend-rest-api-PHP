@@ -13,6 +13,11 @@ class AuthMiddleware {
     $response = $handler->handle($request);
     $route = $request->getUri()->getPath();
     	
+		// пропускаем авториазция в info
+		if ($route == '/') {
+			return $response;
+		}
+
 		// пропускаем авториазция в  identity
     	if (str_contains($route, '/identity/')) {
 			return $response;
