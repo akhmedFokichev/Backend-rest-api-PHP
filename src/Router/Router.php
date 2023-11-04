@@ -20,6 +20,9 @@ $app->post('/identity/login', \App\Module\Identity\IdentityController::class . '
 
 $app->post('/identity/refresh', \App\Module\Identity\IdentityController::class . ':refresh');
 
+// Profile
+
+$app->get('/profle', \App\Module\Profile\ProfileController::class . ':get');
 
 // Storage
 

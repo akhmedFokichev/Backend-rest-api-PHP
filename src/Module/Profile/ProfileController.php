@@ -7,13 +7,13 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ProfileController
 {
-	private \IdentityService $identityService;
+	private \ProfileService $profileService;
 
 	private \Profile $profile;
 	// init
     public function __construct() {
       global $di;
-      $this->identityService = $di->identityService;
+      $this->profileService = $di->profileService;
 	}
 	
 
