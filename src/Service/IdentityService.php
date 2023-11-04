@@ -84,10 +84,25 @@ class IdentityService
 		return $token;
 	}
 
+	public function refresh($login, $refreshToken)
+	{
+		$this->setup();
 
+		$user = $this->identityDataBase->getUser($login);
+		if ($user == null) {
+			return null;
+		}
 
+		$token = $this->generateToken();
+		$this->identityDataBase->updateSession($user['id'], $refreshToken, $token->accessToken, $token->refreshToken, $token->expiresIn);
 
+		$session = $this->identityDataBase->isValidSession($token->accessToken, $token->refreshToken);
+		if ($session == null) {
+			return null;
+		}
 
+		return $token;
+	}
 
 	private function generateRandomString($length = 20)
 	{

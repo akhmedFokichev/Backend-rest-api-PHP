@@ -16,9 +16,9 @@ $app->put('/identity/registration', \App\Module\Identity\IdentityController::cla
 
 $app->post('/identity/login', \App\Module\Identity\IdentityController::class . ':login');
 
-$app->post('identity/delete', \App\Module\Identity\IdentityController::class . ':delete');
+// $app->post('identity/delete', \App\Module\Identity\IdentityController::class . ':delete');
 
-$app->post('identity/refresh/', \App\Module\Identity\IdentityController::class . ':refresh');
+$app->post('/identity/refresh', \App\Module\Identity\IdentityController::class . ':refresh');
 
 
 // Storage

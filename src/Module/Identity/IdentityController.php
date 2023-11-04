@@ -115,14 +115,28 @@ class IdentityController
 	{
 		global $di;
 
-		$this->authLogin('aaaaa', 'ssssss');
+		$parsedBody = $request->getBody()->getContents();
+		$body = json_decode($parsedBody);
 
-		return $response;
+		$token = $this->identityService->refresh($body->login, $body->refreshToken);;
+
+		if ($token == null) {
+			$responseError = new \ResponseError(403, "Нет доступа!", "Логин или пароль неверный!");
+			$responseJson = json_encode($responseError->toJson());
+			$response->getBody()->write($responseJson);
+
+			return $response
+				->withHeader('Content-Type', 'application/json')
+				->withStatus(401);
+		}
+
+		$responseJson = json_encode($token->toJson());
+		$response->getBody()->write($responseJson);
+
+		return $response
+			->withHeader('Content-Type', 'application/json')
+			->withStatus(200);
 	}
-
-
-	// private
-
 
 	private function newUser($access_level, $login, $pass)
 	{

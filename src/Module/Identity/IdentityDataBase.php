@@ -31,6 +31,20 @@ class IdentityDataBase
     $this->dbService->executeSql($sql);
   }
 
+  public function updateSession($userId, $oldRefreshToken, $accessToken, $refreshToken, $expiresIn)
+   {
+    $sql = "UPDATE `identity_session` SET `access_token`='$accessToken',`refresh_token`='$refreshToken',`expiresIn`='$expiresIn',`updated_at`= now()
+     WHERE `refresh_token` = '$oldRefreshToken' and `user_id` = $userId ";
+     //var_dump($sql);
+    $this->dbService->executeSql($sql);
+  }
+
+  public function isValidSession($accessToken, $refreshToken)
+  {
+    $sql = "SELECT * FROM `identity_session` WHERE `access_token` = '$accessToken' and `refresh_token` = '$refreshToken' ";
+    return $this->dbService->getObject($sql);
+  }
+
   public function deleteToken($accessToken)
   {
 
