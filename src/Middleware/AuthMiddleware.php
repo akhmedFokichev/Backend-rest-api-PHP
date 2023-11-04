@@ -8,9 +8,10 @@ class AuthMiddleware
 
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
-
 		global $di;
 		$identityService = $di->identityService;
+
+		$method = $request->getMethod();
 
 		$response = $handler->handle($request);
 		$route = $request->getUri()->getPath();
@@ -25,7 +26,6 @@ class AuthMiddleware
 			return $response;
 		}
 
-
 		$authorization = $request->getHeaderLine('Authorization');
 		$person = $identityService->auth($authorization);
 
@@ -34,10 +34,6 @@ class AuthMiddleware
 			$response->getBody()->write('нет доступа');
 			return $response->withStatus(401);
 		}
-
-
-
-
 
 		// $response = new Response();
 		// $response->getBody()->write('BEFORE' . $existingContent);

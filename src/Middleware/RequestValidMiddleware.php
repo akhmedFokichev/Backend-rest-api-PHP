@@ -16,7 +16,7 @@ class RequestValidMiddleware
     }
 
     if ($method === "POST") {
-      if ($contentType != 'application/json') {
+      if ($contentType == 'application/json') {
         return $handler->handle($request);
 
       } else {
