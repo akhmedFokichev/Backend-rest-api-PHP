@@ -21,8 +21,6 @@ $app->post('identity/delete', \App\Module\Identity\IdentityController::class . '
 $app->post('identity/refresh/', \App\Module\Identity\IdentityController::class . ':refresh');
 
 
-
-
 // Storage
 
 $app->post('/storage/add/', \App\Module\Storage\Controller\StorageController::class . ':add');
