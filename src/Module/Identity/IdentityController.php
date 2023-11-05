@@ -56,7 +56,6 @@ class IdentityController
 				->withStatus(403);
 		}
 
-
 		$responseJson = json_encode($token->toJson());
 		$response->getBody()->write($responseJson);
 
@@ -68,7 +67,6 @@ class IdentityController
 
 	public function login(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
 	{
-
 		$parsedBody = $request->getBody()->getContents();
 		$body = json_decode($parsedBody);
 
