@@ -136,38 +136,4 @@ class IdentityController
 			->withStatus(200);
 	}
 
-	private function newUser($access_level, $login, $pass)
-	{
-		global $di;
-		$hashService = $di->hashService;
-
-		$access_level = 2;
-		$passHashed = $hashService->hash($pass);
-		$identityDataBase->saveNewUser($access_level, $login, $passHashed);
-	}
-
-	private function generateToken()
-	{
-		global $di;
-		$hashService = $di->hashService;
-
-		$value1 = $this->generateRandomString(25);
-		$value2 = date('d.m.Y H:i:s');
-
-		$token = $hashService->hash($value1) . $hashService->hash($value2);
-
-		return $token;
-	}
-
-	private function generateRandomString($length = 30)
-	{
-		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$charactersLength = strlen($characters);
-		$randomString = '';
-		for ($i = 0; $i < $length; $i++) {
-			$randomString .= $characters[random_int(0, $charactersLength - 1)];
-		}
-		return $randomString;
-	}
-
 }

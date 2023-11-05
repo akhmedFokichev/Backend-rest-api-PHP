@@ -1,9 +1,7 @@
 <?php
 
-
 class IdentityDataBase
 {
-
   protected $dbService;
 
   public function __construct($dbService)
@@ -42,6 +40,12 @@ class IdentityDataBase
   public function isValidSession($accessToken, $refreshToken)
   {
     $sql = "SELECT * FROM `identity_session` WHERE `access_token` = '$accessToken' and `refresh_token` = '$refreshToken' ";
+    return $this->dbService->getObject($sql);
+  }
+
+  public function getSession($accessToken)
+  {
+    $sql = "SELECT * FROM `identity_session` WHERE `access_token` = '$accessToken'";
     return $this->dbService->getObject($sql);
   }
 

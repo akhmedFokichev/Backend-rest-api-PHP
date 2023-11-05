@@ -3,7 +3,7 @@
 class SessionService {
 
 	public $user;
-    public $profile;
+    public $session;
 
     public function __construct() { }
         

@@ -27,16 +27,13 @@ class AuthMiddleware
 		}
 
 		$authorization = $request->getHeaderLine('Authorization');
-		$person = $identityService->auth($authorization);
+		$session = $identityService->auth($authorization);
 
-		if (is_null($person)) {
+		if (is_null($session)) {
 			$response = new Response();
 			$response->getBody()->write('нет доступа');
 			return $response->withStatus(401);
 		}
-
-		// $response = new Response();
-		// $response->getBody()->write('BEFORE' . $existingContent);
 
 		return $response;
 	}

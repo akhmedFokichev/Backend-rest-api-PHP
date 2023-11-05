@@ -1,11 +1,8 @@
 <?php
-
 class IdentityService
 {
-
     private \UtilityService $utilityService;
     private \IdentityDataBase $identityDataBase;
-
     private $clientIds;
     private $secretKey;
 
@@ -28,11 +25,15 @@ class IdentityService
 
     public function auth($authorization)
     {
-        // var_dump($authorization)
+        $this->setup();
 
-        // $this->person = new Person();
+        $accessToken = substr($authorization, 7);
+        $session = $this->identityDataBase->getSession($accessToken);
+        if ($session == null) {
+            return null;
+        }
 
-        // return $this->person;
+        return $session;
     }
 
 
