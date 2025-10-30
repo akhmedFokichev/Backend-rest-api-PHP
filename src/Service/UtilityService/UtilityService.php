@@ -1,6 +1,6 @@
 <?php
 
-class UtilityService {
+class HashService {
 	
     private $hashKey;
 
@@ -16,6 +16,6 @@ class UtilityService {
 		$hash = password_hash($value, PASSWORD_BCRYPT);
 
 		return $hash;
-    }
+	}
 	
 }

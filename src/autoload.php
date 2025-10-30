@@ -3,9 +3,12 @@
 // Config
 require_once('../config/Config.php');
 
+// Core
+require_once('../Core/PhpCodeGen.php');
+
 // Service
 require_once('../src/Service/DBService.php');
-require_once('../src/Service/HashService.php');
+require_once('../src/Service/UtilityService.php');
 require_once('../src/Service/SessionService.php');
 
 // DI
@@ -21,6 +24,7 @@ require_once('../src/Module/Profile/ProfileService.php');
 //Middleware
 require_once('../src/Middleware/RequestValidMiddleware.php');
 require_once('../src/Middleware/AuthMiddleware.php');
+require_once('../src/Middleware/CorsMiddleware.php');
 
 
 //Model

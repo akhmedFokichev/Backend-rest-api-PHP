@@ -6,6 +6,7 @@ error_reporting(-1);
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
+use Slim\Middleware\BodyParsingMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -19,12 +20,16 @@ $app = AppFactory::create();
 
 $app->addRoutingMiddleware();
 
+// Parse JSON bodies
+$app->add(new BodyParsingMiddleware());
+
+// Error middleware should be last in the stack
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
-include_once __DIR__ . '/../src/Router/Router.php';
-
+// Global middlewares
 $app->add(new RequestValidMiddleware());
+$app->add(new \App\Middleware\CorsMiddleware());
 
-$app->add(new AuthMiddleware());
+include_once __DIR__ . '/../src/Router/Router.php';
 
 $app->run();

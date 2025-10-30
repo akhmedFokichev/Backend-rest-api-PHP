@@ -1,6 +1,7 @@
 <?php
 
 use Slim\App;
+use Slim\Routing\RouteCollectorProxy;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -10,22 +11,21 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 $app->get('/', \App\Module\Identity\IdentityController::class . ':info');
 
-// Identity
+// Public routes (no Auth)
+$app->group('', function (RouteCollectorProxy $group) {
+    // Identity (use POST for registration)
+    $group->post('/identity/registration', \App\Module\Identity\IdentityController::class . ':registration');
+    $group->post('/identity/registration', \App\Module\Identity\IdentityController::class . ':registration');
+    $group->post('/identity/login', \App\Module\Identity\IdentityController::class . ':login');
+    $group->post('/identity/refresh', \App\Module\Identity\IdentityController::class . ':refresh');
+});
 
-$app->put('/identity/registration', \App\Module\Identity\IdentityController::class . ':registration');
+// Protected routes (with Auth)
+$app->group('', function (RouteCollectorProxy $group) {
+    // Profile
+    $group->get('/profile', \App\Module\Profile\ProfileController::class . ':get');
 
-$app->post('/identity/login', \App\Module\Identity\IdentityController::class . ':login');
-
-// $app->post('identity/delete', \App\Module\Identity\IdentityController::class . ':delete');
-
-$app->post('/identity/refresh', \App\Module\Identity\IdentityController::class . ':refresh');
-
-// Profile
-
-$app->get('/profle', \App\Module\Profile\ProfileController::class . ':get');
-
-// Storage
-
-$app->post('/storage/add/', \App\Module\Storage\Controller\StorageController::class . ':add');
-
-$app->post('/storage/image/', \App\Module\Storage\Controller\StorageController::class . ':getImage');
+    // Storage
+    $group->post('/storage/add/', \App\Module\Storage\Controller\StorageController::class . ':add');
+    $group->post('/storage/image/', \App\Module\Storage\Controller\StorageController::class . ':getImage');
+})->add(new \AuthMiddleware());

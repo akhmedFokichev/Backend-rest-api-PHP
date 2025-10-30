@@ -1,0 +1,9 @@
+# Local environment config (do not commit secrets)
+/config/env.local.php
+
+# IDE and OS
+.idea/
+.DS_Store
+src/.DS_Store
+
+

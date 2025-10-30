@@ -1,0 +1,46 @@
+<?
+namespace App\Module\Storage\Controller;
+
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+class ProfileController
+{
+	private \ProfileService $profileService;
+
+	private \Profile $profile;
+	// init
+    public function __construct() {
+      global $di;
+      $this->profileService = $di->profileService;
+	}
+	
+
+    public function get(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
+        // your code to access items in the container... $this->container->get('');
+	
+		global $di;
+		var_dump($di);
+		
+        return $response;
+    }
+    
+     public function add(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
+        // your code to access items in the container... $this->container->get('');
+	
+		global $di;
+		var_dump($di);
+		
+        return $response;
+    }
+    
+     public function getImage(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface {
+        // your code to access items in the container... $this->container->get('');
+	
+		global $di;
+		var_dump($di);
+		
+        return $response;
+    }
+}
