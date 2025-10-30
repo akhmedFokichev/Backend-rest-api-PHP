@@ -15,7 +15,6 @@ $app->get('/', \App\Module\Identity\IdentityController::class . ':info');
 $app->group('', function (RouteCollectorProxy $group) {
     // Identity (use POST for registration)
     $group->post('/identity/registration', \App\Module\Identity\IdentityController::class . ':registration');
-    $group->post('/identity/registration', \App\Module\Identity\IdentityController::class . ':registration');
     $group->post('/identity/login', \App\Module\Identity\IdentityController::class . ':login');
     $group->post('/identity/refresh', \App\Module\Identity\IdentityController::class . ':refresh');
 });
