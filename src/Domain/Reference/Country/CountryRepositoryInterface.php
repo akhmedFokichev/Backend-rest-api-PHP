@@ -1,0 +1,12 @@
+<?php
+namespace App\Domain\Reference\Country;
+
+interface CountryRepositoryInterface
+{
+    /** @return Country[] */
+    public function list(?string $parentUuid = null, ?bool $isCatalog = null): array;
+    public function create(string $code, string $name, bool $isCatalog = false, ?string $parentUuid = null, int $sortOrder = 0): string; // returns uuid
+    public function update(string $uuid, ?string $code = null, ?string $name = null, ?string $parentUuid = null, ?bool $isCatalog = null, ?int $sortOrder = null): void;
+    public function delete(string $uuid): void;
+}
+

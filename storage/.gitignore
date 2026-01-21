@@ -1,0 +1,3 @@
+# Игнорируем все файлы в storage, кроме .gitignore
+*
+!.gitignore

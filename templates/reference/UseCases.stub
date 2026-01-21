@@ -1,0 +1,11 @@
+<?php
+namespace App\Application\Reference\<Type>;
+
+use App\Domain\Reference\<Type>\<Type>RepositoryInterface;
+
+class List<Type>UseCase { public function __construct(private <Type>RepositoryInterface $r) {} public function execute(?string $parentUuid=null, ?bool $isCatalog=null): array { return $this->r->list($parentUuid, $isCatalog); } }
+class Create<Type>UseCase { public function __construct(private <Type>RepositoryInterface $r) {} public function execute(string $code, string $name, bool $isCatalog=false, ?string $parentUuid=null, int $sortOrder=0): string { return $this->r->create($code, $name, $isCatalog, $parentUuid, $sortOrder); } }
+class Update<Type>UseCase { public function __construct(private <Type>RepositoryInterface $r) {} public function execute(string $uuid, ?string $code=null, ?string $name=null, ?string $parentUuid=null, ?bool $isCatalog=null, ?int $sortOrder=null): void { $this->r->update($uuid, $code, $name, $parentUuid, $isCatalog, $sortOrder); } }
+class Delete<Type>UseCase { public function __construct(private <Type>RepositoryInterface $r) {} public function execute(string $uuid): void { $this->r->delete($uuid); } }
+
+

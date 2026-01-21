@@ -1,0 +1,7 @@
+// <Type> routes
+$app->get('/reference/<type>', [$controller, 'list']);
+$app->post('/reference/<type>', [$controller, 'create']);
+$app->put('/reference/<type>/{uuid}', [$controller, 'update']);
+$app->delete('/reference/<type>/{uuid}', [$controller, 'delete']);
+
+
