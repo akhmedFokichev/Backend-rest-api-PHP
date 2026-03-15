@@ -1,27 +1,17 @@
 <?php
+
 namespace App\Http\Controller\Storage;
 
-use App\Application\Storage\UploadFileUseCase;
-use App\Application\Storage\ListFilesUseCase;
-use App\Application\Storage\GetFileUseCase;
-use App\Application\Storage\DeleteFileUseCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use App\Domain\Storage\Entity\File;
 use OpenApi\Attributes as OA;
 
 class FileController
 {
-    public function __construct(
-        private UploadFileUseCase $uploadUC,
-        private ListFilesUseCase $listUC,
-        private GetFileUseCase $getUC,
-        private DeleteFileUseCase $deleteUC
-    ) {}
-
     #[OA\Post(
         path: "/storage/files",
         summary: "Загрузка файла",
-        description: "Загружает файл на сервер и сохраняет информацию в БД",
         tags: ["Storage"],
         requestBody: new OA\RequestBody(
             required: true,
@@ -30,12 +20,7 @@ class FileController
                 schema: new OA\Schema(
                     required: ["file"],
                     properties: [
-                        new OA\Property(
-                            property: "file",
-                            type: "string",
-                            format: "binary",
-                            description: "Файл для загрузки"
-                        )
+                        new OA\Property(property: "file", type: "string", format: "binary")
                     ]
                 )
             )
@@ -43,66 +28,53 @@ class FileController
         responses: [
             new OA\Response(
                 response: 201,
-                description: "Файл успешно загружен",
+                description: "Файл загружен",
                 content: new OA\MediaType(
                     mediaType: "application/json",
-                    schema: new OA\Schema(
-                        properties: [
-                            new OA\Property(property: "id", type: "integer", example: 1),
-                            new OA\Property(property: "uuid", type: "string", format: "uuid", example: "550e8400-e29b-41d4-a716-446655440000"),
-                            new OA\Property(property: "originalName", type: "string", example: "document.pdf"),
-                            new OA\Property(property: "mimeType", type: "string", example: "application/pdf"),
-                            new OA\Property(property: "size", type: "integer", example: 1024000),
-                            new OA\Property(property: "createdAt", type: "string", format: "date-time")
-                        ]
-                    )
+                    schema: new OA\Schema(properties: [
+                        new OA\Property(property: "id", type: "integer"),
+                        new OA\Property(property: "uuid", type: "string", format: "uuid"),
+                        new OA\Property(property: "originalName", type: "string"),
+                        new OA\Property(property: "mimeType", type: "string"),
+                        new OA\Property(property: "size", type: "integer"),
+                        new OA\Property(property: "createdAt", type: "string", format: "date-time")
+                    ])
                 )
             ),
-            new OA\Response(
-                response: 400,
-                description: "Ошибка загрузки файла"
-            )
+            new OA\Response(response: 400, description: "Ошибка загрузки")
         ]
     )]
     public function upload(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         try {
             $uploadedFiles = $request->getUploadedFiles();
-            
             if (!isset($uploadedFiles['file'])) {
                 throw new \RuntimeException('No file uploaded');
             }
+            $uploaded = $uploadedFiles['file'];
 
-            $uploadedFile = $uploadedFiles['file'];
-            
-            // Конвертируем PSR-7 UploadedFile в массив для Use Case
             $fileArray = [
-                'name' => $uploadedFile->getClientFilename(),
-                'type' => $uploadedFile->getClientMediaType(),
-                'size' => $uploadedFile->getSize(),
-                'tmp_name' => $uploadedFile->getStream()->getMetadata('uri'),
-                'error' => $uploadedFile->getError()
+                'name' => $uploaded->getClientFilename(),
+                'type' => $uploaded->getClientMediaType(),
+                'size' => $uploaded->getSize(),
+                'tmp_name' => $uploaded->getStream()->getMetadata('uri'),
+                'error' => $uploaded->getError()
             ];
 
-            $file = $this->uploadUC->execute($fileArray);
-            
+            $file = new File();
+            $file->uploadFrom($fileArray);
+
             $response->getBody()->write(json_encode($file->toArray()));
-            return $response
-                ->withStatus(201)
-                ->withHeader('Content-Type', 'application/json');
-                
+            return $response->withStatus(201)->withHeader('Content-Type', 'application/json');
         } catch (\Throwable $e) {
             $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
-            return $response
-                ->withStatus(400)
-                ->withHeader('Content-Type', 'application/json');
+            return $response->withStatus(400)->withHeader('Content-Type', 'application/json');
         }
     }
 
     #[OA\Get(
         path: "/storage/files",
-        summary: "Получить список файлов",
-        description: "Возвращает список всех загруженных файлов",
+        summary: "Список файлов",
         tags: ["Storage"],
         responses: [
             new OA\Response(
@@ -112,16 +84,14 @@ class FileController
                     mediaType: "application/json",
                     schema: new OA\Schema(
                         type: "array",
-                        items: new OA\Items(
-                            properties: [
-                                new OA\Property(property: "id", type: "integer"),
-                                new OA\Property(property: "uuid", type: "string", format: "uuid"),
-                                new OA\Property(property: "originalName", type: "string"),
-                                new OA\Property(property: "mimeType", type: "string"),
-                                new OA\Property(property: "size", type: "integer"),
-                                new OA\Property(property: "createdAt", type: "string", format: "date-time")
-                            ]
-                        )
+                        items: new OA\Items(properties: [
+                            new OA\Property(property: "id", type: "integer"),
+                            new OA\Property(property: "uuid", type: "string", format: "uuid"),
+                            new OA\Property(property: "originalName", type: "string"),
+                            new OA\Property(property: "mimeType", type: "string"),
+                            new OA\Property(property: "size", type: "integer"),
+                            new OA\Property(property: "createdAt", type: "string", format: "date-time")
+                        ])
                     )
                 )
             )
@@ -129,9 +99,9 @@ class FileController
     )]
     public function list(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $files = $this->listUC->execute();
-        $data = array_map(fn($file) => $file->toArray(), $files);
-        
+        $files = File::findAll('created_at DESC');
+        $data = array_map(fn($f) => $f->toArray(), $files);
+
         $response->getBody()->write(json_encode($data));
         return $response->withHeader('Content-Type', 'application/json');
     }
@@ -139,93 +109,63 @@ class FileController
     #[OA\Get(
         path: "/storage/files/{uuid}",
         summary: "Скачать файл",
-        description: "Скачивает файл по его UUID",
         tags: ["Storage"],
         parameters: [
-            new OA\Parameter(
-                name: "uuid",
-                in: "path",
-                required: true,
-                description: "UUID файла",
-                schema: new OA\Schema(type: "string", format: "uuid")
-            )
+            new OA\Parameter(name: "uuid", in: "path", required: true, schema: new OA\Schema(type: "string", format: "uuid"))
         ],
         responses: [
-            new OA\Response(
-                response: 200,
-                description: "Файл успешно получен",
-                content: new OA\MediaType(mediaType: "application/octet-stream")
-            ),
-            new OA\Response(
-                response: 404,
-                description: "Файл не найден"
-            )
+            new OA\Response(response: 200, description: "Файл", content: new OA\MediaType(mediaType: "application/octet-stream")),
+            new OA\Response(response: 404, description: "Файл не найден")
         ]
     )]
     public function download(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         try {
-            $uuid = $args['uuid'] ?? '';
-            $result = $this->getUC->execute($uuid);
-            
-            $file = $result['file'];
-            $fullPath = $result['fullPath'];
+            $file = File::findByUuid($args['uuid'] ?? '');
+            if (!$file) {
+                throw new \RuntimeException('File not found');
+            }
 
-            // Читаем файл
-            $fileContent = file_get_contents($fullPath);
-            
-            $response->getBody()->write($fileContent);
+            $fullPath = $file->getFullPath();
+            if (!file_exists($fullPath)) {
+                throw new \RuntimeException('Physical file not found');
+            }
+
+            $response->getBody()->write(file_get_contents($fullPath));
             return $response
                 ->withHeader('Content-Type', $file->mimeType)
                 ->withHeader('Content-Disposition', 'attachment; filename="' . $file->originalName . '"')
                 ->withHeader('Content-Length', (string)$file->size);
-                
         } catch (\Throwable $e) {
             $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
-            return $response
-                ->withStatus(404)
-                ->withHeader('Content-Type', 'application/json');
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
         }
     }
 
     #[OA\Delete(
         path: "/storage/files/{uuid}",
         summary: "Удалить файл",
-        description: "Удаляет файл и его запись из БД",
         tags: ["Storage"],
         parameters: [
-            new OA\Parameter(
-                name: "uuid",
-                in: "path",
-                required: true,
-                description: "UUID файла",
-                schema: new OA\Schema(type: "string", format: "uuid")
-            )
+            new OA\Parameter(name: "uuid", in: "path", required: true, schema: new OA\Schema(type: "string", format: "uuid"))
         ],
         responses: [
-            new OA\Response(
-                response: 204,
-                description: "Файл успешно удален"
-            ),
-            new OA\Response(
-                response: 404,
-                description: "Файл не найден"
-            )
+            new OA\Response(response: 204, description: "Файл удалён"),
+            new OA\Response(response: 404, description: "Файл не найден")
         ]
     )]
     public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         try {
-            $uuid = $args['uuid'] ?? '';
-            $this->deleteUC->execute($uuid);
-            
+            $file = File::findByUuid($args['uuid'] ?? '');
+            if (!$file) {
+                throw new \RuntimeException('File not found');
+            }
+            $file->deleteWithFile();
             return $response->withStatus(204);
-            
         } catch (\Throwable $e) {
             $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
-            return $response
-                ->withStatus(404)
-                ->withHeader('Content-Type', 'application/json');
+            return $response->withStatus(404)->withHeader('Content-Type', 'application/json');
         }
     }
 }

@@ -26,4 +26,5 @@ use OpenApi\Attributes as OA;
 #[OA\Tag(name: "Identity", description: "Операции аутентификации и авторизации")]
 #[OA\Tag(name: "Reference", description: "Управление справочниками")]
 #[OA\Tag(name: "Storage", description: "Управление файлами и хранилищем")]
+#[OA\Tag(name: "Product", description: "Список товаров")]
 class OpenApi {}
