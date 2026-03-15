@@ -1,7 +1,6 @@
-# Запрет листинга директории
 Options -Indexes
+DirectoryIndex index.php
 
-# Передача Authorization в PHP (если хостинг режет заголовок)
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /

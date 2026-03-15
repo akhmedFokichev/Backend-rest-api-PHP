@@ -1,5 +1,6 @@
 # Local environment config (do not commit secrets)
 /config/env.local.php
+/config/db.local.php
 
 # IDE and OS
 .idea/
