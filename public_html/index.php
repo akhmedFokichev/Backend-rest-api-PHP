@@ -9,9 +9,7 @@ $app->addRoutingMiddleware();
 $app->addBodyParsingMiddleware();
 $app->addErrorMiddleware(true, true, true);
 
-$app->get('/', function ($request, $response) {
-    $response->getBody()->write('OK');
-    return $response->withHeader('Content-Type', 'text/plain');
-});
+$routes = require __DIR__ . '/../routes.php';
+$routes($app);
 
 $app->run();
