@@ -29,20 +29,22 @@ if (!is_file($autoload)) {
 require $autoload;
 
 use Slim\Factory\AppFactory;
+use App\Domain\Auth\UserToken;
 use App\Domain\User\User;
 use App\Domain\Profile\Profile;
 
 try {
     $dbConfig = require __DIR__ . '/config/db.php';
-    $createPdo = require __DIR__ . '/config/pdo.php';
+    $createDb = require __DIR__ . '/config/medoo.php';
     $isExample = ($dbConfig['user'] === 'your_user' || ($dbConfig['dbname'] ?? '') === 'your_database');
-    $pdo = (!$isExample && $dbConfig['dbname'] !== '' && $dbConfig['user'] !== '')
-        ? $createPdo($dbConfig)
+    $db = (!$isExample && $dbConfig['dbname'] !== '' && $dbConfig['user'] !== '')
+        ? $createDb($dbConfig)
         : null;
 
-    if ($pdo !== null) {
-        User::setPdo($pdo);
-        Profile::setPdo($pdo);
+    if ($db !== null) {
+        UserToken::setDb($db);
+        User::setDb($db);
+        Profile::setDb($db);
     }
 
     $app = AppFactory::create();
@@ -51,7 +53,7 @@ try {
     $app->addErrorMiddleware(true, true, true);
 
     $routes = require __DIR__ . '/routes.php';
-    $routes($app, $pdo);
+    $routes($app, $db);
 
     $app->run();
 } catch (Throwable $e) {

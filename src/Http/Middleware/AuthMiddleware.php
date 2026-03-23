@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Domain\Auth\UserToken;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -10,14 +11,12 @@ use Slim\Psr7\Response;
 
 class AuthMiddleware implements MiddlewareInterface
 {
-    /** Мок: допустимый токен (позже заменить на проверку JWT/сессии) */
-    private const MOCK_VALID_TOKEN = 'mock-token';
-
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $authHeader = $request->getHeaderLine('Authorization');
+        $token = $this->extractBearerToken($authHeader);
 
-        if ($authHeader === '' || !$this->mockCheck($authHeader)) {
+        if ($token === null) {
             $response = new Response();
             $response->getBody()->write(json_encode([
                 'error' => 'Unauthorized',
@@ -28,20 +27,29 @@ class AuthMiddleware implements MiddlewareInterface
                 ->withStatus(401);
         }
 
+        $tokenRow = UserToken::findActiveByPlainToken($token);
+        if ($tokenRow === null) {
+            $response = new Response();
+            $response->getBody()->write(json_encode([
+                'error' => 'Unauthorized',
+                'message' => 'Token is invalid, expired or revoked',
+            ]));
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(401);
+        }
+
+        $request = $request->withAttribute('authUserId', $tokenRow['user_id']);
         return $handler->handle($request);
     }
 
-    /**
-     * Мок-проверка: считаем авторизованным, если передан Bearer mock-token.
-     * Позже заменить на проверку JWT или сессии.
-     */
-    private function mockCheck(string $authHeader): bool
+    private function extractBearerToken(string $authHeader): ?string
     {
         $prefix = 'Bearer ';
         if (stripos($authHeader, $prefix) !== 0) {
-            return false;
+            return null;
         }
-        $token = trim(substr($authHeader, strlen($prefix)));
-        return $token === self::MOCK_VALID_TOKEN;
+        $token = trim((string) substr($authHeader, strlen($prefix)));
+        return $token !== '' ? $token : null;
     }
 }

@@ -3,12 +3,12 @@
 namespace App\Domain\User;
 
 use App\Enum\Role;
-use PDO;
+use Medoo\Medoo;
 use PDOException;
 
 class User
 {
-    private static ?PDO $pdo = null;
+    private static ?Medoo $db = null;
 
     public ?int $id = null;
     public string $login = '';
@@ -23,32 +23,42 @@ class User
         $this->role = Role::User;
     }
 
-    public static function setPdo(PDO $pdo): void
+    public static function setDb(Medoo $db): void
     {
-        self::$pdo = $pdo;
+        self::$db = $db;
     }
 
-    private static function pdo(): PDO
+    private static function db(): Medoo
     {
-        if (self::$pdo === null) {
-            throw new \RuntimeException('User::setPdo() was not called');
+        if (self::$db === null) {
+            throw new \RuntimeException('User::setDb() was not called');
         }
-        return self::$pdo;
+        return self::$db;
     }
 
     public static function findByLogin(string $login): ?self
     {
-        $stmt = self::pdo()->prepare('SELECT id, login, password_hash, role, created_at, updated_at FROM users WHERE login = :login LIMIT 1');
-        $stmt->execute([':login' => $login]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = self::db()->get('users', [
+            'id',
+            'login',
+            'password_hash',
+            'role',
+            'created_at',
+            'updated_at',
+        ], ['login' => $login]);
         return $row ? self::hydrate($row) : null;
     }
 
     public static function findById(int $id): ?self
     {
-        $stmt = self::pdo()->prepare('SELECT id, login, password_hash, role, created_at, updated_at FROM users WHERE id = :id LIMIT 1');
-        $stmt->execute([':id' => $id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = self::db()->get('users', [
+            'id',
+            'login',
+            'password_hash',
+            'role',
+            'created_at',
+            'updated_at',
+        ], ['id' => $id]);
         return $row ? self::hydrate($row) : null;
     }
 
@@ -89,31 +99,33 @@ class User
 
     private function insert(): void
     {
-        $stmt = self::pdo()->prepare('INSERT INTO users (login, password_hash, role) VALUES (:login, :hash, :role)');
         try {
-            $stmt->execute([':login' => $this->login, ':hash' => $this->passwordHash, ':role' => $this->role->value]);
+            self::db()->insert('users', [
+                'login' => $this->login,
+                'password_hash' => $this->passwordHash,
+                'role' => $this->role->value,
+            ]);
         } catch (PDOException $e) {
             if ((int) $e->getCode() === 23000) {
                 throw new \RuntimeException('user already exists');
             }
             throw $e;
         }
-        $this->id = (int) self::pdo()->lastInsertId();
-        $stmt = self::pdo()->prepare('SELECT created_at, updated_at FROM users WHERE id = :id');
-        $stmt->execute([':id' => $this->id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->id = (int) self::db()->id();
+        $row = self::db()->get('users', ['created_at', 'updated_at'], ['id' => $this->id]);
         $this->createdAt = $row['created_at'] ?? null;
         $this->updatedAt = $row['updated_at'] ?? null;
     }
 
     private function update(): void
     {
-        $stmt = self::pdo()->prepare('UPDATE users SET login = :login, password_hash = :hash, role = :role, updated_at = CURRENT_TIMESTAMP WHERE id = :id');
-        $stmt->execute([
-            ':login' => $this->login,
-            ':hash'  => $this->passwordHash,
-            ':role'  => $this->role->value,
-            ':id'    => $this->id,
+        self::db()->update('users', [
+            'login' => $this->login,
+            'password_hash' => $this->passwordHash,
+            'role' => $this->role->value,
+            'updated_at' => Medoo::raw('CURRENT_TIMESTAMP'),
+        ], [
+            'id' => $this->id,
         ]);
     }
 
@@ -125,8 +137,7 @@ class User
         if ($this->id === null) {
             return;
         }
-        $stmt = self::pdo()->prepare('DELETE FROM users WHERE id = :id');
-        $stmt->execute([':id' => $this->id]);
+        self::db()->delete('users', ['id' => $this->id]);
     }
 
     /**

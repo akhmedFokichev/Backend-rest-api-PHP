@@ -2,6 +2,7 @@
 
 namespace App\Http\Controller;
 
+use App\Domain\Auth\UserToken;
 use App\Domain\User\User;
 use App\Enum\Role;
 use Psr\Http\Message\ResponseInterface;
@@ -24,12 +25,6 @@ class UserController
         }
 
         $role = Role::User;
-        if (array_key_exists('role', $body) && $body['role'] !== null) {
-            $r = Role::tryFrom((int) $body['role']);
-            if ($r !== null) {
-                $role = $r;
-            }
-        }
 
         try {
             $user = new User();
@@ -68,14 +63,35 @@ class UserController
             $response->getBody()->write(json_encode(['error' => 'invalid credentials']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
+        $issued = UserToken::issue((int) $user->id);
 
         $response->getBody()->write(json_encode([
             'id'        => $user->id,
             'login'     => $user->login,
             'role'      => $user->role->value,
             'roleLabel' => $user->role->label(),
+            'accessToken' => $issued['token'],
+            'tokenType' => 'Bearer',
+            'expiresAt' => $issued['expiresAt'],
             'message'   => 'authorized',
         ]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * POST /user/logout
+     * Требует Authorization: Bearer <token>
+     */
+    public function logout(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $token = $this->extractBearerToken($request->getHeaderLine('Authorization'));
+        if ($token === null) {
+            $response->getBody()->write(json_encode(['error' => 'missing bearer token']));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        UserToken::revokeByPlainToken($token);
+        $response->getBody()->write(json_encode(['ok' => true, 'message' => 'logged out']));
         return $response->withHeader('Content-Type', 'application/json');
     }
 
@@ -98,5 +114,15 @@ class UserController
 
         $user->delete();
         return $response->withStatus(204);
+    }
+
+    private function extractBearerToken(string $authHeader): ?string
+    {
+        $prefix = 'Bearer ';
+        if (stripos($authHeader, $prefix) !== 0) {
+            return null;
+        }
+        $token = trim((string) substr($authHeader, strlen($prefix)));
+        return $token !== '' ? $token : null;
     }
 }

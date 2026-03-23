@@ -2,12 +2,12 @@
 
 namespace App\Domain\Profile;
 
-use PDO;
+use Medoo\Medoo;
 use PDOException;
 
 class Profile
 {
-    private static ?PDO $pdo = null;
+    private static ?Medoo $db = null;
 
     public ?int $id = null;
     public int $userId;
@@ -18,32 +18,46 @@ class Profile
     public ?string $createdAt = null;
     public ?string $updatedAt = null;
 
-    public static function setPdo(PDO $pdo): void
+    public static function setDb(Medoo $db): void
     {
-        self::$pdo = $pdo;
+        self::$db = $db;
     }
 
-    private static function pdo(): PDO
+    private static function db(): Medoo
     {
-        if (self::$pdo === null) {
-            throw new \RuntimeException('Profile::setPdo() was not called');
+        if (self::$db === null) {
+            throw new \RuntimeException('Profile::setDb() was not called');
         }
-        return self::$pdo;
+        return self::$db;
     }
 
     public static function findByUserId(int $userId): ?self
     {
-        $stmt = self::pdo()->prepare('SELECT id, user_id, first_name, last_name, phone, avatar_url, created_at, updated_at FROM profile WHERE user_id = :uid LIMIT 1');
-        $stmt->execute([':uid' => $userId]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = self::db()->get('profile', [
+            'id',
+            'user_id',
+            'first_name',
+            'last_name',
+            'phone',
+            'avatar_url',
+            'created_at',
+            'updated_at',
+        ], ['user_id' => $userId]);
         return $row ? self::hydrate($row) : null;
     }
 
     public static function findById(int $id): ?self
     {
-        $stmt = self::pdo()->prepare('SELECT id, user_id, first_name, last_name, phone, avatar_url, created_at, updated_at FROM profile WHERE id = :id LIMIT 1');
-        $stmt->execute([':id' => $id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = self::db()->get('profile', [
+            'id',
+            'user_id',
+            'first_name',
+            'last_name',
+            'phone',
+            'avatar_url',
+            'created_at',
+            'updated_at',
+        ], ['id' => $id]);
         return $row ? self::hydrate($row) : null;
     }
 
@@ -75,16 +89,13 @@ class Profile
 
     private function insert(): void
     {
-        $stmt = self::pdo()->prepare(
-            'INSERT INTO profile (user_id, first_name, last_name, phone, avatar_url) VALUES (:uid, :fn, :ln, :phone, :avatar)'
-        );
         try {
-            $stmt->execute([
-                ':uid'   => $this->userId,
-                ':fn'    => $this->firstName,
-                ':ln'    => $this->lastName,
-                ':phone' => $this->phone,
-                ':avatar'=> $this->avatarUrl,
+            self::db()->insert('profile', [
+                'user_id' => $this->userId,
+                'first_name' => $this->firstName,
+                'last_name' => $this->lastName,
+                'phone' => $this->phone,
+                'avatar_url' => $this->avatarUrl,
             ]);
         } catch (PDOException $e) {
             if ((int) $e->getCode() === 23000) {
@@ -92,25 +103,22 @@ class Profile
             }
             throw $e;
         }
-        $this->id = (int) self::pdo()->lastInsertId();
-        $stmt = self::pdo()->prepare('SELECT created_at, updated_at FROM profile WHERE id = :id');
-        $stmt->execute([':id' => $this->id]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->id = (int) self::db()->id();
+        $row = self::db()->get('profile', ['created_at', 'updated_at'], ['id' => $this->id]);
         $this->createdAt = $row['created_at'] ?? null;
         $this->updatedAt = $row['updated_at'] ?? null;
     }
 
     private function update(): void
     {
-        $stmt = self::pdo()->prepare(
-            'UPDATE profile SET first_name = :fn, last_name = :ln, phone = :phone, avatar_url = :avatar, updated_at = CURRENT_TIMESTAMP WHERE id = :id'
-        );
-        $stmt->execute([
-            ':fn'    => $this->firstName,
-            ':ln'    => $this->lastName,
-            ':phone' => $this->phone,
-            ':avatar'=> $this->avatarUrl,
-            ':id'    => $this->id,
+        self::db()->update('profile', [
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName,
+            'phone' => $this->phone,
+            'avatar_url' => $this->avatarUrl,
+            'updated_at' => Medoo::raw('CURRENT_TIMESTAMP'),
+        ], [
+            'id' => $this->id,
         ]);
     }
 
@@ -119,8 +127,7 @@ class Profile
         if ($this->id === null) {
             return;
         }
-        $stmt = self::pdo()->prepare('DELETE FROM profile WHERE id = :id');
-        $stmt->execute([':id' => $this->id]);
+        self::db()->delete('profile', ['id' => $this->id]);
     }
 
     public function toArray(): array
