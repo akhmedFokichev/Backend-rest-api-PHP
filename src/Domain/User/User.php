@@ -2,6 +2,7 @@
 
 namespace App\Domain\User;
 
+use App\Enum\Role;
 use PDO;
 use PDOException;
 
@@ -13,8 +14,14 @@ class User
     public string $login = '';
     /** @var string внутреннее поле, не отдавать в API */
     private string $passwordHash = '';
+    public Role $role;
     public ?string $createdAt = null;
     public ?string $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->role = Role::User;
+    }
 
     public static function setPdo(PDO $pdo): void
     {
@@ -31,7 +38,7 @@ class User
 
     public static function findByLogin(string $login): ?self
     {
-        $stmt = self::pdo()->prepare('SELECT id, login, password_hash, created_at, updated_at FROM users WHERE login = :login LIMIT 1');
+        $stmt = self::pdo()->prepare('SELECT id, login, password_hash, role, created_at, updated_at FROM users WHERE login = :login LIMIT 1');
         $stmt->execute([':login' => $login]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? self::hydrate($row) : null;
@@ -39,7 +46,7 @@ class User
 
     public static function findById(int $id): ?self
     {
-        $stmt = self::pdo()->prepare('SELECT id, login, password_hash, created_at, updated_at FROM users WHERE id = :id LIMIT 1');
+        $stmt = self::pdo()->prepare('SELECT id, login, password_hash, role, created_at, updated_at FROM users WHERE id = :id LIMIT 1');
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? self::hydrate($row) : null;
@@ -51,6 +58,7 @@ class User
         $user->id = (int) $row['id'];
         $user->login = $row['login'];
         $user->passwordHash = $row['password_hash'];
+        $user->role = Role::tryFrom((int) ($row['role'] ?? Role::User->value)) ?? Role::User;
         $user->createdAt = $row['created_at'] ?? null;
         $user->updatedAt = $row['updated_at'] ?? null;
         return $user;
@@ -81,9 +89,9 @@ class User
 
     private function insert(): void
     {
-        $stmt = self::pdo()->prepare('INSERT INTO users (login, password_hash) VALUES (:login, :hash)');
+        $stmt = self::pdo()->prepare('INSERT INTO users (login, password_hash, role) VALUES (:login, :hash, :role)');
         try {
-            $stmt->execute([':login' => $this->login, ':hash' => $this->passwordHash]);
+            $stmt->execute([':login' => $this->login, ':hash' => $this->passwordHash, ':role' => $this->role->value]);
         } catch (PDOException $e) {
             if ((int) $e->getCode() === 23000) {
                 throw new \RuntimeException('user already exists');
@@ -100,10 +108,11 @@ class User
 
     private function update(): void
     {
-        $stmt = self::pdo()->prepare('UPDATE users SET login = :login, password_hash = :hash, updated_at = CURRENT_TIMESTAMP WHERE id = :id');
+        $stmt = self::pdo()->prepare('UPDATE users SET login = :login, password_hash = :hash, role = :role, updated_at = CURRENT_TIMESTAMP WHERE id = :id');
         $stmt->execute([
             ':login' => $this->login,
             ':hash'  => $this->passwordHash,
+            ':role'  => $this->role->value,
             ':id'    => $this->id,
         ]);
     }
@@ -128,6 +137,8 @@ class User
         return [
             'id'        => $this->id,
             'login'     => $this->login,
+            'role'      => $this->role->value,
+            'roleLabel' => $this->role->label(),
             'createdAt' => $this->createdAt,
             'updatedAt' => $this->updatedAt,
         ];

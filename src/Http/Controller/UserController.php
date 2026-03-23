@@ -3,13 +3,14 @@
 namespace App\Http\Controller;
 
 use App\Domain\User\User;
+use App\Enum\Role;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class UserController
 {
     /**
-     * POST /user  Body: {"login": "...", "password": "..."}
+     * POST /user  Body: {"login": "...", "password": "...", "role": 10}  (role опционально, по умолчанию 10=User)
      */
     public function create(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -22,10 +23,19 @@ class UserController
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
+        $role = Role::User;
+        if (array_key_exists('role', $body) && $body['role'] !== null) {
+            $r = Role::tryFrom((int) $body['role']);
+            if ($r !== null) {
+                $role = $r;
+            }
+        }
+
         try {
             $user = new User();
             $user->login = $login;
             $user->setPassword($password);
+            $user->role = $role;
             $user->save();
         } catch (\RuntimeException $e) {
             if ($e->getMessage() === 'user already exists') {
@@ -35,7 +45,7 @@ class UserController
             throw $e;
         }
 
-        $response->getBody()->write(json_encode(['id' => $user->id, 'login' => $user->login]));
+        $response->getBody()->write(json_encode($user->toArray()));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(201);
     }
 
@@ -60,9 +70,11 @@ class UserController
         }
 
         $response->getBody()->write(json_encode([
-            'id'      => $user->id,
-            'login'   => $user->login,
-            'message' => 'authorized',
+            'id'        => $user->id,
+            'login'     => $user->login,
+            'role'      => $user->role->value,
+            'roleLabel' => $user->role->label(),
+            'message'   => 'authorized',
         ]));
         return $response->withHeader('Content-Type', 'application/json');
     }
