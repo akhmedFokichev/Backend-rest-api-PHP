@@ -10,11 +10,22 @@ use Psr\Http\Message\ServerRequestInterface;
 class ProfileController
 {
     /**
+     * Resolve target user id from route `{id}` or from auth token (`authUserId`).
+     */
+    private function resolveUserId(ServerRequestInterface $request, array $args): int
+    {
+        if (array_key_exists('id', $args)) {
+            return (int) ($args['id'] ?? 0);
+        }
+        return (int) ($request->getAttribute('authUserId') ?? 0);
+    }
+
+    /**
      * GET /user/{id}/profile — получить профиль пользователя.
      */
     public function get(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $userId = (int) ($args['id'] ?? 0);
+        $userId = $this->resolveUserId($request, $args);
         if ($userId <= 0) {
             $response->getBody()->write(json_encode(['error' => 'invalid user id']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
@@ -41,7 +52,7 @@ class ProfileController
      */
     public function save(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $userId = (int) ($args['id'] ?? 0);
+        $userId = $this->resolveUserId($request, $args);
         if ($userId <= 0) {
             $response->getBody()->write(json_encode(['error' => 'invalid user id']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
@@ -84,7 +95,7 @@ class ProfileController
      */
     public function delete(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
-        $userId = (int) ($args['id'] ?? 0);
+        $userId = $this->resolveUserId($request, $args);
         if ($userId <= 0) {
             $response->getBody()->write(json_encode(['error' => 'invalid user id']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);

@@ -3,8 +3,10 @@
 use Slim\App;
 use Medoo\Medoo;
 use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controller\UserController;
 use App\Http\Controller\ProfileController;
+use App\Enum\Role;
 
 return function (App $app, ?Medoo $db): void {
     // Публичный маршрут (без авторизации)
@@ -41,10 +43,33 @@ return function (App $app, ?Medoo $db): void {
             $group->post('/user/logout', [$userController, 'logout'])->add(AuthMiddleware::class);
 
             // Защищённые маршруты — требуют Authorization: Bearer mock-token
-            $group->delete('/user/{id}', [$userController, 'delete'])->add(AuthMiddleware::class);
-            $group->get('/user/{id}/profile', [$profileController, 'get'])->add(AuthMiddleware::class);
-            $group->put('/user/{id}/profile', [$profileController, 'save'])->add(AuthMiddleware::class);
-            $group->delete('/user/{id}/profile', [$profileController, 'delete'])->add(AuthMiddleware::class);
+            // Только Admin может удалять пользователей
+            $group->delete('/user/{id}', [$userController, 'delete'])
+                ->add(new RoleMiddleware(Role::Admin))
+                ->add(AuthMiddleware::class);
+
+            // Профиль доступен ролям от Moderator и выше
+            $group->get('/user/{id}/profile', [$profileController, 'get'])
+                ->add(new RoleMiddleware(Role::Moderator))
+                ->add(AuthMiddleware::class);
+
+            $group->put('/user/{id}/profile', [$profileController, 'save'])
+                ->add(new RoleMiddleware(Role::Moderator))
+                ->add(AuthMiddleware::class);
+
+            $group->delete('/user/{id}/profile', [$profileController, 'delete'])
+                ->add(new RoleMiddleware(Role::Moderator))
+                ->add(AuthMiddleware::class);
+
+             // Профиль свой всем доступен, но только для себя
+             $group->get('/me/profile', [$profileController, 'get'])
+                ->add(AuthMiddleware::class);
+
+             $group->put('/me/profile', [$profileController, 'save'])
+                ->add(AuthMiddleware::class);
+
+             $group->delete('/me/profile', [$profileController, 'delete'])
+                ->add(AuthMiddleware::class);
         }
 
         $group->get('/me', function ($request, $response) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controller;
 
 use App\Domain\Auth\UserToken;
+use App\Domain\Profile\Profile;
 use App\Domain\User\User;
 use App\Enum\Role;
 use Psr\Http\Message\ResponseInterface;
@@ -32,6 +33,12 @@ class UserController
             $user->setPassword($password);
             $user->role = $role;
             $user->save();
+
+            // Создаем профиль для нового пользователя
+            $profile = new Profile();
+            $profile->userId = $user->id;
+            $profile->save();
+
         } catch (\RuntimeException $e) {
             if ($e->getMessage() === 'user already exists') {
                 $response->getBody()->write(json_encode(['error' => 'user already exists']));
