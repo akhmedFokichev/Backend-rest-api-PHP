@@ -1,0 +1,13 @@
+# Минимальный вариант, если основной .htaccess даёт Forbidden.
+# Переименуйте в .htaccess и отключите mod_rewrite-блок при проблемах.
+
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
