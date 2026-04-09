@@ -16,9 +16,7 @@ class UserController
      */
     public function create(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $body = json_decode((string) $request->getBody(), true) ?: [];
-        $login = trim((string) ($body['login'] ?? ''));
-        $password = (string) ($body['password'] ?? '');
+        [$login, $password] = $this->extractCredentials($request);
 
         if ($login === '' || $password === '') {
             $response->getBody()->write(json_encode(['error' => 'login and password are required']));
@@ -44,7 +42,11 @@ class UserController
                 $response->getBody()->write(json_encode(['error' => 'user already exists']));
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(409);
             }
-            throw $e;
+            $response->getBody()->write(json_encode([
+                'error' => 'failed to create user',
+                'details' => $e->getPrevious()?->getMessage(),
+            ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }
 
         $response->getBody()->write(json_encode($user->toArray()));
@@ -56,9 +58,7 @@ class UserController
      */
     public function login(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $body = json_decode((string) $request->getBody(), true) ?: [];
-        $login = trim((string) ($body['login'] ?? ''));
-        $password = (string) ($body['password'] ?? '');
+        [$login, $password] = $this->extractCredentials($request);
 
         if ($login === '' || $password === '') {
             $response->getBody()->write(json_encode(['error' => 'login and password are required']));
@@ -81,6 +81,23 @@ class UserController
             'tokenType' => 'Bearer',
             'expiresAt' => $issued['expiresAt'],
             'message'   => 'authorized',
+        ]));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    /**
+     * GET /user
+     */
+    public function list(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $users = array_map(
+            static fn(User $user): array => $user->toArray(),
+            User::findAll()
+        );
+
+        $response->getBody()->write(json_encode([
+            'items' => $users,
+            'count' => count($users),
         ]));
         return $response->withHeader('Content-Type', 'application/json');
     }
@@ -131,5 +148,33 @@ class UserController
         }
         $token = trim((string) substr($authHeader, strlen($prefix)));
         return $token !== '' ? $token : null;
+    }
+
+    /**
+     * Поддерживает JSON body, parsed body (form-data/x-www-form-urlencoded) и query params.
+     *
+     * @return array{0: string, 1: string}
+     */
+    private function extractCredentials(ServerRequestInterface $request): array
+    {
+        $jsonBody = json_decode((string) $request->getBody(), true);
+        $parsedBody = $request->getParsedBody();
+        $queryParams = $request->getQueryParams();
+
+        $sources = [
+            is_array($jsonBody) ? $jsonBody : [],
+            is_array($parsedBody) ? $parsedBody : [],
+            is_array($queryParams) ? $queryParams : [],
+        ];
+
+        foreach ($sources as $source) {
+            $login = trim((string) ($source['login'] ?? ''));
+            $password = (string) ($source['password'] ?? '');
+            if ($login !== '' && $password !== '') {
+                return [$login, $password];
+            }
+        }
+
+        return ['', ''];
     }
 }

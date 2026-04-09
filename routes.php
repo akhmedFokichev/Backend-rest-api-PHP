@@ -41,6 +41,9 @@ return function (App $app, ?Medoo $db): void {
             $group->post('/user/registration', [$userController, 'create']);
             $group->post('/user/login', [$userController, 'login']);
             $group->post('/user/logout', [$userController, 'logout'])->add(AuthMiddleware::class);
+            $group->get('/user/list', [$userController, 'list'])
+                ->add(new RoleMiddleware(Role::Moderator))
+                ->add(AuthMiddleware::class);
 
             // Защищённые маршруты — требуют Authorization: Bearer mock-token
             // Только Admin может удалять пользователей

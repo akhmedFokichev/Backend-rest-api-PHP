@@ -62,6 +62,29 @@ class User
         return $row ? self::hydrate($row) : null;
     }
 
+    /**
+     * @return list<self>
+     */
+    public static function findAll(): array
+    {
+        $rows = self::db()->select('users', [
+            'id',
+            'login',
+            'password_hash',
+            'role',
+            'created_at',
+            'updated_at',
+        ], [
+            'ORDER' => ['id' => 'DESC'],
+        ]);
+
+        if (!is_array($rows)) {
+            return [];
+        }
+
+        return array_map(static fn(array $row): self => self::hydrate($row), $rows);
+    }
+
     private static function hydrate(array $row): self
     {
         $user = new self();
@@ -99,6 +122,10 @@ class User
 
     private function insert(): void
     {
+        if (self::findByLogin($this->login) !== null) {
+            throw new \RuntimeException('user already exists');
+        }
+
         try {
             self::db()->insert('users', [
                 'login' => $this->login,
@@ -106,10 +133,7 @@ class User
                 'role' => $this->role->value,
             ]);
         } catch (PDOException $e) {
-            if ((int) $e->getCode() === 23000) {
-                throw new \RuntimeException('user already exists');
-            }
-            throw $e;
+            throw new \RuntimeException('failed to create user', 0, $e);
         }
         $this->id = (int) self::db()->id();
         $row = self::db()->get('users', ['created_at', 'updated_at'], ['id' => $this->id]);
