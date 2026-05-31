@@ -15,7 +15,7 @@ $configFile = $projectRoot . '/config/github-pull.local.php';
 
 $config = is_file($configFile) ? require $configFile : [];
 $secret = (string) ($config['secret'] ?? '');
-$branch = (string) ($config['branch'] ?? 'master');
+$branch = (string) ($config['branch'] ?? 'main');
 
 function githubPull(string $projectRoot, string $branch): array
 {

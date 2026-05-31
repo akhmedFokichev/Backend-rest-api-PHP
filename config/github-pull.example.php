@@ -6,5 +6,5 @@
 
 return [
     'secret' => 'change-me',
-    'branch' => 'master', // или main
+    'branch' => 'main',
 ];

@@ -104,3 +104,21 @@ cp config/github-pull.example.php config/github-pull.local.php
 3. На сервере код обновится через `git pull`
 
 Ручной запуск: **Actions → Deploy to server → Run workflow**.
+
+### Если Actions падает с `curl: (28) Couldn't connect to server`
+
+GitHub Actions не может достучаться до хостинга (часто блокируются IP дата-центров).
+Сайт при этом из браузера может открываться нормально.
+
+**Решение: cron на сервере** (сервер сам тянет код с GitHub):
+
+```bash
+# каждые 5 минут
+*/5 * * * * cd /home/c/cv82602/slim && /usr/bin/php scripts/github-pull.php >> var/pull.log 2>&1
+```
+
+Или через панель хостинга → **Cron** → та же команда.
+
+CLI-режим `scripts/github-pull.php` token не требует — нужен только `git` и `exec()`.
+
+**Альтернатива:** self-hosted GitHub Runner на сервере (Actions запускаются локально, без входящего HTTP).
