@@ -35,3 +35,72 @@
 ## Проверка
 
 Откройте в браузере: `https://identity.xsdk.ru/` — должна отображаться строка **OK**.
+
+---
+
+## Обновление с GitHub (git pull)
+
+### Один раз на сервере
+
+```bash
+cd /path/to/project
+git clone git@github.com:USER/REPO.git .
+cp config/github-pull.example.php config/github-pull.local.php
+# задайте secret и branch (master или main)
+```
+
+### Через HTTP (удалённо)
+
+```bash
+curl "https://identity.xsdk.ru/github-pull.php?token=YOUR_SECRET"
+```
+
+Или с заголовком:
+
+```bash
+curl -H "X-Deploy-Token: YOUR_SECRET" "https://identity.xsdk.ru/github-pull.php"
+```
+
+### Через SSH
+
+```bash
+php scripts/github-pull.php
+```
+
+**Нужно:** `git` и `exec()` на хостинге.
+
+---
+
+## Автодеплой через GitHub Actions
+
+После push в `master`/`main` GitHub сам вызовет `github-pull.php` на сервере.
+
+### 1. На сервере (один раз)
+
+```bash
+git clone git@github.com:USER/REPO.git .
+cp config/github-pull.example.php config/github-pull.local.php
+# secret в github-pull.local.php = тот же, что DEPLOY_TOKEN в GitHub
+```
+
+### 2. В GitHub репозитории
+
+**Settings → Secrets and variables → Actions → New repository secret**
+
+| Secret | Значение |
+|--------|----------|
+| `DEPLOY_TOKEN` | тот же token, что в `config/github-pull.local.php` |
+
+Опционально **Variables**:
+
+| Variable | Значение |
+|----------|----------|
+| `DEPLOY_URL` | `https://identity.xsdk.ru/github-pull.php` (если не задан — используется этот URL по умолчанию) |
+
+### 3. Проверка
+
+1. Сделай commit + push в `master`
+2. Открой **Actions** в GitHub — job `Deploy to server` должен быть зелёным
+3. На сервере код обновится через `git pull`
+
+Ручной запуск: **Actions → Deploy to server → Run workflow**.
