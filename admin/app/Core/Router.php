@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Router.php — простой маршрутизатор админки.
+ *
+ * Назначение: сопоставляет URL и HTTP-метод с контроллером и middleware.
+ */
+
 declare(strict_types=1);
 
 namespace App\Core;

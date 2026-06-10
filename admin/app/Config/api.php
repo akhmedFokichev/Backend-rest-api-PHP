@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * api.php — настройки подключения к REST API.
+ *
+ * Назначение: base_url Slim API, mock-режим и таймаут HTTP-запросов.
+ */
+
 declare(strict_types=1);
 
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';

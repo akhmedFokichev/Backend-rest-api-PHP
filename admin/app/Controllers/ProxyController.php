@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * ProxyController.php — same-origin прокси к API для JavaScript.
+ *
+ * Назначение: браузер вызывает /admin/api/proxy/*, PHP добавляет Bearer-токен и дергает Slim.
+ */
+
 declare(strict_types=1);
 
 namespace App\Controllers;
@@ -8,10 +14,6 @@ use App\Core\ApiClient;
 use App\Core\Auth;
 use App\Core\Url;
 use App\Core\View;
-
-/**
- * Same-origin proxy to Slim API. JS calls /api/proxy/products instead of external API URL.
- */
 final class ProxyController
 {
     public function handle(): void

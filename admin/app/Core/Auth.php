@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Auth.php — сессия и права пользователя админки.
+ *
+ * Назначение: хранит токен API в $_SESSION, проверяет login/logout и permissions по роли.
+ */
+
 declare(strict_types=1);
 
 namespace App\Core;

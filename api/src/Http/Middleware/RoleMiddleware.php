@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * RoleMiddleware.php — проверка минимальной роли пользователя.
+ *
+ * Назначение: сравнивает роль из БД с требуемой (Moderator, Admin и т.д.), иначе 403.
+ */
+
 namespace App\Http\Middleware;
 
 use App\Domain\User\User;

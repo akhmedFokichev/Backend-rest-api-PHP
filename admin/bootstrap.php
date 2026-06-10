@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * bootstrap.php — ядро админ-панели.
+ *
+ * Назначение: автозагрузка, сессия, маршруты (/admin, /admin/login, /admin/users), proxy к API.
+ * Вызывается из: public_html/admin/index.php или admin/public/index.php.
+ */
+
 declare(strict_types=1);
 
 if (!defined('BASE_PATH')) {

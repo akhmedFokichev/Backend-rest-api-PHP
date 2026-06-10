@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Profile.php — доменная модель профиля пользователя.
+ *
+ * Назначение: CRUD в таблице profile (имя, телефон, аватар), привязка к user_id.
+ */
+
 namespace App\Domain\Profile;
 
 use Medoo\Medoo;

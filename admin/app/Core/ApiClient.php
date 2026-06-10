@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * ApiClient.php — HTTP-клиент к Slim API.
+ *
+ * Назначение: curl-запросы к /api/v1/* или mock-данные для разработки без бэкенда.
+ */
+
 declare(strict_types=1);
 
 namespace App\Core;

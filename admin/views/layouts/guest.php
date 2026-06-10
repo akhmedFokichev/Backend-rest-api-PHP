@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * guest.php — layout для гостевых страниц (логин, ошибки).
+ *
+ * Назначение: минимальная обёртка без sidebar.
+ */
+
 use App\Core\Url;
 
 $appConfig = require BASE_PATH . '/app/Config/app.php';

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * UserToken.php — Bearer-токены авторизации.
+ *
+ * Назначение: выпуск, проверка и отзыв access-токенов в таблице user_token.
+ */
+
 namespace App\Domain\Auth;
 
 use Medoo\Medoo;

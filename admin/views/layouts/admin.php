@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * admin.php — основной layout админки (sidebar, navbar, скрипты).
+ *
+ * Назначение: обёртка для всех авторизованных страниц AdminLTE.
+ */
+
 use App\Core\Auth;
 use App\Core\Url;
 

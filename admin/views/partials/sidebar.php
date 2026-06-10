@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * sidebar.php — боковое меню админки.
+ *
+ * Назначение: навигация по разделам с учётом permissions пользователя.
+ */
+
 use App\Core\Auth;
 use App\Core\Url;
 

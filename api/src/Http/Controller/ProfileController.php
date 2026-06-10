@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * ProfileController.php — HTTP-обработчики профилей.
+ *
+ * Назначение: чтение/сохранение/удаление профиля (свой /me/profile и чужой /user/{id}/profile).
+ */
+
 namespace App\Http\Controller;
 
 use App\Domain\User\User;

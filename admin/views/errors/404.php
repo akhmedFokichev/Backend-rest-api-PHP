@@ -1,3 +1,10 @@
+<?php
+/**
+ * 404.php — страница «маршрут не найден».
+ *
+ * Назначение: неизвестный URL внутри админ-роутера.
+ */
+?>
 <div class="login-box" style="width: auto; max-width: 480px;">
   <div class="card card-outline card-warning">
     <div class="card-body text-center">

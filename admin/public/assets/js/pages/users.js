@@ -1,3 +1,8 @@
+/**
+ * pages/users.js — логика страницы «Пользователи».
+ *
+ * Назначение: загрузка GET user/list, отрисовка таблицы, удаление (Admin).
+ */
 document.addEventListener('DOMContentLoaded', async () => {
   const table = document.getElementById('users-table');
   const tbody = table.querySelector('tbody');

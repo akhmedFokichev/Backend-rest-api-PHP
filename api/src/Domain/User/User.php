@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * User.php — доменная модель пользователя.
+ *
+ * Назначение: CRUD в таблице users, хеш пароля, поиск по login/id, список пользователей.
+ */
+
 namespace App\Domain\User;
 
 use App\Enum\Role;

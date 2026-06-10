@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * View.php — рендер шаблонов и HTTP-ответы UI.
+ *
+ * Назначение: подключение layout + view, redirect и JSON-ответы.
+ */
+
 declare(strict_types=1);
 
 namespace App\Core;

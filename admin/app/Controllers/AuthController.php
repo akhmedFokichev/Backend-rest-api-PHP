@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * AuthController.php — вход и выход из админки.
+ *
+ * Назначение: форма логина, вызов POST /api/v1/user/login, сохранение токена в сессии.
+ */
+
 declare(strict_types=1);
 
 namespace App\Controllers;

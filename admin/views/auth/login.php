@@ -1,3 +1,10 @@
+<?php
+/**
+ * login.php — форма входа в админ-панель.
+ *
+ * Назначение: POST логин/пароль → AuthController::login → API user/login.
+ */
+?>
 <div class="login-box">
   <div class="login-logo"><b>CMS</b> Admin</div>
   <div class="card">

@@ -1,5 +1,7 @@
 /**
- * API client — requests go through admin proxy (/admin/api/proxy/...).
+ * api.js — клиент REST API из браузера.
+ *
+ * Назначение: fetch к /admin/api/proxy/* (токен добавляет PHP на сервере).
  */
 const APP_BASE = '/admin';
 

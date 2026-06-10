@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * AuthMiddleware.php — проверка Bearer-токена.
+ *
+ * Назначение: извлекает токен из Authorization, валидирует через UserToken, пишет authUserId в request.
+ */
+
 namespace App\Http\Middleware;
 
 use App\Domain\Auth\UserToken;

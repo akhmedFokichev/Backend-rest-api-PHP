@@ -1,3 +1,8 @@
+/**
+ * app.css — дополнительные стили админ-панели.
+ *
+ * Назначение: индикатор mock-режима и мелкие правки поверх AdminLTE.
+ */
 .mock-mode .main-header::before {
   content: 'MOCK';
   position: absolute;

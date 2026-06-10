@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * routes.php — регистрация HTTP-маршрутов REST API.
+ *
+ * Назначение: описывает все эндпоинты под /api/v1/* (users, profiles, auth, db-check).
+ * Подключается из: api/bootstrap.php.
+ */
+
 use Slim\App;
 use Medoo\Medoo;
 use App\Http\Middleware\AuthMiddleware;

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * PageController.php — страницы админ-панели.
+ *
+ * Назначение: дашборд и список пользователей (рендер views).
+ */
+
 declare(strict_types=1);
 
 namespace App\Controllers;

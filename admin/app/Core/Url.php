@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Url.php — генерация URL с учётом префикса /admin.
+ *
+ * Назначение: единые ссылки и пути к статике (assets) в админке.
+ */
+
 declare(strict_types=1);
 
 namespace App\Core;

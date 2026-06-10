@@ -1,3 +1,10 @@
+<?php
+/**
+ * users/index.php — таблица пользователей.
+ *
+ * Назначение: HTML-скелет списка; данные подгружает assets/js/pages/users.js через API proxy.
+ */
+?>
 <div class="card">
   <div class="card-header">
     <h3 class="card-title">Пользователи</h3>

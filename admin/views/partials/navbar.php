@@ -1,4 +1,11 @@
-<?php use App\Core\Url; ?>
+<?php
+/**
+ * navbar.php — верхняя панель админки.
+ *
+ * Назначение: логин пользователя и кнопка выхода.
+ */
+use App\Core\Url;
+?>
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
   <ul class="navbar-nav">
     <li class="nav-item">

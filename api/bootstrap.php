@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * bootstrap.php — точка запуска Slim API.
+ *
+ * Назначение: подключает autoload, БД (Medoo), регистрирует маршруты и запускает приложение.
+ * Вызывается из: public_html/api/index.php.
+ */
+
 declare(strict_types=1);
 
 define('API_DEBUG', true);

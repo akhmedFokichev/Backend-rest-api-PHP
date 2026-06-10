@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * UserController.php — HTTP-обработчики пользователей.
+ *
+ * Назначение: регистрация, логин, logout, список и удаление пользователей.
+ */
+
 namespace App\Http\Controller;
 
 use App\Domain\Auth\UserToken;

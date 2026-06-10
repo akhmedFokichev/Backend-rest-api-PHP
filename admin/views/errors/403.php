@@ -1,3 +1,10 @@
+<?php
+/**
+ * 403.php — страница «доступ запрещён».
+ *
+ * Назначение: показывается при недостаточных правах (Auth::requirePermission).
+ */
+?>
 <div class="login-box" style="width: auto; max-width: 480px;">
   <div class="card card-outline card-danger">
     <div class="card-body text-center">

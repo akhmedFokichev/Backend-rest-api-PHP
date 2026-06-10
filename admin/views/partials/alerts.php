@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * alerts.php — системные уведомления в шапке контента.
+ *
+ * Назначение: предупреждение о mock-режиме API и flash-сообщения.
+ */
+
 $apiConfig = require BASE_PATH . '/app/Config/api.php';
 if ($apiConfig['mock_enabled'] ?? false): ?>
 <div class="alert alert-warning alert-dismissible">
