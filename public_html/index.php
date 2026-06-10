@@ -1,8 +1,14 @@
 <?php
 
+define('APP_DEBUG', true);
+
+if (APP_DEBUG) {
+    ini_set('display_errors', '1');
+    error_reporting(E_ALL);
+}
+
 require __DIR__ . '/../vendor/autoload.php';
 
-// Проверка: папка src должна быть рядом с public_html (на хостинге загрузите её)
 $srcRoot = __DIR__ . '/../src';
 if (!is_dir($srcRoot) || !is_file($srcRoot . '/Domain/User/User.php')) {
     header('Content-Type: text/plain; charset=utf-8');
@@ -17,27 +23,36 @@ use App\Domain\Auth\UserToken;
 use App\Domain\User\User;
 use App\Domain\Profile\Profile;
 
-$dbConfig = require __DIR__ . '/../config/db.php';
-$createDb = require __DIR__ . '/../config/medoo.php';
+try {
+    $dbConfig = require __DIR__ . '/../config/db.php';
+    $createDb = require __DIR__ . '/../config/medoo.php';
 
-// Не подключаться, если остались примеры из db.example.php
-$isExample = ($dbConfig['user'] === 'your_user' || ($dbConfig['dbname'] ?? '') === 'your_database');
-$db = (!$isExample && $dbConfig['dbname'] !== '' && $dbConfig['user'] !== '')
-    ? $createDb($dbConfig)
-    : null;
+    $isExample = ($dbConfig['user'] === 'your_user' || ($dbConfig['dbname'] ?? '') === 'your_database');
+    $db = (!$isExample && $dbConfig['dbname'] !== '' && $dbConfig['user'] !== '')
+        ? $createDb($dbConfig)
+        : null;
 
-if ($db !== null) {
-    UserToken::setDb($db);
-    User::setDb($db);
-    Profile::setDb($db);
+    if ($db !== null) {
+        UserToken::setDb($db);
+        User::setDb($db);
+        Profile::setDb($db);
+    }
+
+    $app = AppFactory::create();
+    $app->addRoutingMiddleware();
+    $app->addBodyParsingMiddleware();
+    $app->addErrorMiddleware(true, true, true);
+
+    $routes = require __DIR__ . '/../routes.php';
+    $routes($app, $db);
+
+    $app->run();
+} catch (Throwable $e) {
+    header('Content-Type: text/plain; charset=utf-8');
+    http_response_code(500);
+    if (APP_DEBUG) {
+        echo $e->getMessage() . "\n\n" . $e->getTraceAsString();
+    } else {
+        echo 'Ошибка сервера. Включите APP_DEBUG в index.php для диагностики.';
+    }
 }
-
-$app = AppFactory::create();
-$app->addRoutingMiddleware();
-$app->addBodyParsingMiddleware();
-$app->addErrorMiddleware(true, true, true);
-
-$routes = require __DIR__ . '/../routes.php';
-$routes($app, $db);
-
-$app->run();

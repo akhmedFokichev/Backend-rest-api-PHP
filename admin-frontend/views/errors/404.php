@@ -1,0 +1,9 @@
+<div class="login-box" style="width: auto; max-width: 480px;">
+  <div class="card card-outline card-warning">
+    <div class="card-body text-center">
+      <h1 class="text-warning">404</h1>
+      <p>Страница не найдена.</p>
+      <a href="/admin" class="btn btn-primary">На дашборд</a>
+    </div>
+  </div>
+</div>

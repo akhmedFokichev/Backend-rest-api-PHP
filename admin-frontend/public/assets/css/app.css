@@ -1,0 +1,22 @@
+.mock-mode .main-header::before {
+  content: 'MOCK';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffc107;
+  color: #212529;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 3px;
+  z-index: 1050;
+}
+
+.main-header {
+  position: relative;
+}
+
+.login-page {
+  background: #f4f6f9;
+}
