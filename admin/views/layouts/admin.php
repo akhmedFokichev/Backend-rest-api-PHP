@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\Auth;
+use App\Core\Url;
 
 $appConfig = require BASE_PATH . '/app/Config/app.php';
 $apiConfig = require BASE_PATH . '/app/Config/api.php';
@@ -16,7 +17,7 @@ $user = Auth::user();
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-bs4@1.13.8/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" href="/assets/css/app.css">
+  <link rel="stylesheet" href="<?= htmlspecialchars(Url::asset('css/app.css')) ?>">
 </head>
 <body class="hold-transition sidebar-mini<?= ($apiConfig['mock_enabled'] ?? false) ? ' mock-mode' : '' ?>">
 <div class="wrapper">
@@ -50,7 +51,7 @@ $user = Auth::user();
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.8/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs4@1.13.8/js/dataTables.bootstrap4.min.js"></script>
-<script src="/assets/js/api.js"></script>
-<script src="/assets/js/app.js"></script>
+<script src="<?= htmlspecialchars(Url::asset('js/api.js')) ?>"></script>
+<script src="<?= htmlspecialchars(Url::asset('js/app.js')) ?>"></script>
 </body>
 </html>

@@ -6,32 +6,22 @@
 
 ```
 Backend-rest-api-PHP/
-├── public_html/          ← Slim API (/api/v1/*)
-├── admin-frontend/       ← эта админка
-│   └── public/           ← document root для админки
-├── src/
-└── routes.php
+├── public_html/          ← document root (лендинг + /api + /admin)
+├── api/                  ← Slim (routes.php, src/, bootstrap.php)
+├── admin/                ← эта админка
+└── config/
 ```
 
 ## Локальный запуск
 
-**Терминал 1 — API (Slim):**
-
 ```bash
 cd public_html
-php -S localhost:8000
+php -S localhost:8080
 ```
 
-Проверка: http://localhost:8000/api/v1/db-check
-
-**Терминал 2 — админка:**
-
-```bash
-cd admin-frontend/public
-php -S localhost:8080 router.php
-```
-
-Откройте: http://localhost:8080/login
+- Лендинг: http://localhost:8080/
+- API: http://localhost:8080/api/v1/db-check
+- Админка: http://localhost:8080/admin/login
 
 Вход — учётная запись из вашей БД (`POST /api/v1/user/login`).
 
@@ -41,7 +31,7 @@ php -S localhost:8080 router.php
 
 ```php
 return [
-    'base_url' => 'http://localhost:8000/api/v1',
+    'base_url' => 'http://localhost:8080/api/v1',
     'mock_enabled' => false,  // true — демо без Slim
     'timeout' => 15,
 ];
@@ -53,8 +43,8 @@ return [
 
 | Действие | Slim endpoint | Админка |
 |----------|---------------|---------|
-| Вход | `POST /api/v1/user/login` | форма `/login` |
-| Выход | `POST /api/v1/user/logout` | `/logout` |
+| Вход | `POST /api/v1/user/login` | `/admin/login` |
+| Выход | `POST /api/v1/user/logout` | `/admin/logout` |
 | Список пользователей | `GET /api/v1/user/list` | `/admin/users` (Moderator+) |
 | Удаление | `DELETE /api/v1/user/{id}` | кнопка (Admin) |
 
@@ -74,9 +64,9 @@ JS вызывает **same-origin proxy**: `/api/proxy/user/list` → PHP доб
 
 ## Деплой
 
-- API: document root → `public_html/`
-- Админка: отдельный vhost или подпапка → `admin-frontend/public/`
-- В `api.php` — production URL API
+- Document root → `public_html/`
+- API: `/api/v1/*`, админка: `/admin/*` на одном домене
+- `api.php` определяет URL API автоматически по `HTTP_HOST`
 
 ## Mock-режим
 

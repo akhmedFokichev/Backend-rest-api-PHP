@@ -1,3 +1,4 @@
+<?php use App\Core\Url; ?>
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
   <ul class="navbar-nav">
     <li class="nav-item">
@@ -10,7 +11,7 @@
       <span class="nav-link text-muted"><?= htmlspecialchars($user['login'] ?? '') ?></span>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="/logout" title="Выход"><i class="fas fa-sign-out-alt"></i></a>
+      <a class="nav-link" href="<?= htmlspecialchars(Url::to('logout')) ?>" title="Выход"><i class="fas fa-sign-out-alt"></i></a>
     </li>
   </ul>
 </nav>

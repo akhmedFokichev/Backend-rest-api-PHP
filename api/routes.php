@@ -9,13 +9,7 @@ use App\Http\Controller\ProfileController;
 use App\Enum\Role;
 
 return function (App $app, ?Medoo $db): void {
-    // Публичный маршрут (без авторизации)
-    $app->get('/', function ($request, $response) {
-        $response->getBody()->write('OK');
-        return $response->withHeader('Content-Type', 'text/plain');
-    });
-
-    // Все API-эндпоинты идут под /api/v1/*
+    // REST API: https://domain/api/v1/*
     $app->group('/api/v1', function (\Slim\Routing\RouteCollectorProxy $group) use ($db) {
         // Проверка подключения к БД
         $group->get('/db-check', function ($request, $response) use ($db) {

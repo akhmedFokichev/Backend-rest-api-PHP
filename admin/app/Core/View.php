@@ -37,7 +37,17 @@ final class View
 
     public static function redirect(string $path): never
     {
-        header('Location: ' . $path);
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            header('Location: ' . $path);
+            exit;
+        }
+
+        $relative = ltrim($path, '/');
+        if ($relative === 'admin') {
+            $relative = '';
+        }
+
+        header('Location: ' . Url::to($relative));
         exit;
     }
 

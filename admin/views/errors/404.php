@@ -3,7 +3,7 @@
     <div class="card-body text-center">
       <h1 class="text-warning">404</h1>
       <p>Страница не найдена.</p>
-      <a href="/admin" class="btn btn-primary">На дашборд</a>
+      <a href="<?= htmlspecialchars(\App\Core\Url::to()) ?>" class="btn btn-primary">На дашборд</a>
     </div>
   </div>
 </div>

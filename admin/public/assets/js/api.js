@@ -1,7 +1,8 @@
 /**
- * API client — all requests go through same-origin proxy (/api/proxy/...).
- * Token is stored in PHP session; proxy adds Authorization header.
+ * API client — requests go through admin proxy (/admin/api/proxy/...).
  */
+const APP_BASE = '/admin';
+
 const Api = {
   async request(method, path, body = null) {
     const options = {
@@ -16,7 +17,7 @@ const Api = {
       options.body = JSON.stringify(body);
     }
 
-    const response = await fetch('/api/proxy/' + path.replace(/^\//, ''), options);
+    const response = await fetch(APP_BASE + '/api/proxy/' + path.replace(/^\//, ''), options);
 
     if (response.status === 204) {
       return null;
@@ -31,7 +32,7 @@ const Api = {
     }
 
     if (response.status === 401) {
-      window.location.href = '/login';
+      window.location.href = APP_BASE + '/login';
       throw new Error('Unauthorized');
     }
 

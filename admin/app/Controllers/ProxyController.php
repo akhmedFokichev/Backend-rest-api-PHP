@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Core\ApiClient;
 use App\Core\Auth;
+use App\Core\Url;
 use App\Core\View;
 
 /**
@@ -20,7 +21,7 @@ final class ProxyController
         }
 
         $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
-        $prefix = '/api/proxy/';
+        $prefix = Url::to('api/proxy/');
         $path = str_starts_with($uri, $prefix) ? substr($uri, strlen($prefix)) : '';
 
         if ($path === '') {

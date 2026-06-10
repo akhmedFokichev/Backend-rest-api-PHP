@@ -3,21 +3,32 @@
 Если в панели хостинга корневая папка сайта указана как **public_html**, то на сервере должна быть такая структура:
 
 ```
-slim/                          ← ваша папка сайта (например /home/c/cv82602/slim/)
-├── public_html/               ← корень сайта в панели
-│   ├── index.php
+slim/                          ← папка проекта
+├── public_html/               ← document root сайта
+│   ├── index.php              ← лендинг (/)
+│   ├── api/index.php          ← Slim API (/api/*)
+│   ├── admin/index.php        ← админка (/admin/*)
 │   └── .htaccess
-├── vendor/                    ← вся папка (после composer install)
-├── routes.php                 ← файл в корне slim/, не внутри public_html
-└── src/                       ← вся папка с подпапками
+├── api/
+│   ├── routes.php
+│   ├── bootstrap.php
+│   └── src/
+├── admin/                     ← код админ-панели
+├── vendor/
+└── config/
 ```
 
-**Загрузите в одну папку с public_html (не внутрь public_html):**
+**URL на одном домене:**
 
-| Что загрузить | Куда на хостинге |
-|---------------|------------------|
-| Папка **vendor** (целиком) | Рядом с public_html, т.е. в slim/vendor/ |
-| Файл **routes.php** | В slim/, т.е. slim/routes.php |
-| Папка **src** (целиком) | В slim/, т.е. slim/src/ |
+| URL | Назначение |
+|-----|------------|
+| `/` | лендинг |
+| `/api/v1/*` | REST API (Slim) |
+| `/admin` | админ-панель |
 
-В файловом менеджере хостинга откройте папку, где лежит **public_html**. В этой же папке должны лежать **vendor**, **routes.php** и **src**.
+После `git pull` на сервере создайте symlink для статики админки (если его нет):
+
+```bash
+cd public_html/admin
+ln -sf ../../admin/public/assets assets
+```

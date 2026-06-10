@@ -33,10 +33,10 @@
     <h3 class="card-title">Добро пожаловать, <?= htmlspecialchars($user['name'] ?? $user['login'] ?? '') ?></h3>
   </div>
   <div class="card-body">
-    <p>Админка в <code>admin-frontend/</code>, API в <code>public_html/</code>.</p>
+    <p>Админка: <code>/admin</code>, API: <code>/api/v1</code>.</p>
     <p>Данные через proxy: <code>/api/proxy/*</code> → Slim.</p>
     <?php if (\App\Core\Auth::can('users.view')): ?>
-      <p><a href="/admin/users">Список пользователей</a> (требует роль Moderator+).</p>
+      <p><a href="<?= htmlspecialchars(\App\Core\Url::to('users')) ?>">Список пользователей</a> (требует роль Moderator+).</p>
     <?php endif; ?>
   </div>
 </div>

@@ -1,58 +1,57 @@
 <?php
 
-define('APP_DEBUG', true);
+declare(strict_types=1);
 
-if (APP_DEBUG) {
-    ini_set('display_errors', '1');
-    error_reporting(E_ALL);
-}
-
-require __DIR__ . '/../vendor/autoload.php';
-
-$srcRoot = __DIR__ . '/../src';
-if (!is_dir($srcRoot) || !is_file($srcRoot . '/Domain/User/User.php')) {
-    header('Content-Type: text/plain; charset=utf-8');
-    http_response_code(503);
-    echo "Application incomplete. Upload the 'src' folder to the server (same level as public_html).\n";
-    echo "Path checked: " . $srcRoot;
-    exit;
-}
-
-use Slim\Factory\AppFactory;
-use App\Domain\Auth\UserToken;
-use App\Domain\User\User;
-use App\Domain\Profile\Profile;
-
-try {
-    $dbConfig = require __DIR__ . '/../config/db.php';
-    $createDb = require __DIR__ . '/../config/medoo.php';
-
-    $isExample = ($dbConfig['user'] === 'your_user' || ($dbConfig['dbname'] ?? '') === 'your_database');
-    $db = (!$isExample && $dbConfig['dbname'] !== '' && $dbConfig['user'] !== '')
-        ? $createDb($dbConfig)
-        : null;
-
-    if ($db !== null) {
-        UserToken::setDb($db);
-        User::setDb($db);
-        Profile::setDb($db);
+http_response_code(200);
+header('Content-Type: text/html; charset=utf-8');
+?>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Identity</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
     }
-
-    $app = AppFactory::create();
-    $app->addRoutingMiddleware();
-    $app->addBodyParsingMiddleware();
-    $app->addErrorMiddleware(true, true, true);
-
-    $routes = require __DIR__ . '/../routes.php';
-    $routes($app, $db);
-
-    $app->run();
-} catch (Throwable $e) {
-    header('Content-Type: text/plain; charset=utf-8');
-    http_response_code(500);
-    if (APP_DEBUG) {
-        echo $e->getMessage() . "\n\n" . $e->getTraceAsString();
-    } else {
-        echo 'Ошибка сервера. Включите APP_DEBUG в index.php для диагностики.';
+    .card {
+      max-width: 32rem;
+      padding: 2rem;
+      border-radius: 1rem;
+      background: #1e293b;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
     }
-}
+    h1 { margin: 0 0 0.5rem; font-size: 1.75rem; }
+    p { margin: 0 0 1.5rem; color: #94a3b8; line-height: 1.5; }
+    .links { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    a {
+      color: #fff;
+      background: #3b82f6;
+      text-decoration: none;
+      padding: 0.625rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+    }
+    a.secondary { background: #334155; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Identity</h1>
+    <p>Платформа авторизации и управления пользователями.</p>
+    <div class="links">
+      <a href="/admin">Админ-панель</a>
+      <a href="/api/v1/db-check" class="secondary">API status</a>
+    </div>
+  </main>
+</body>
+</html>

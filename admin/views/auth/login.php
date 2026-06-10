@@ -8,7 +8,7 @@
         <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
       <?php endif; ?>
 
-      <form action="/login" method="post">
+      <form action="<?= htmlspecialchars(\App\Core\Url::to('login')) ?>" method="post">
         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf ?? '') ?>">
         <div class="input-group mb-3">
           <input type="text" name="login" class="form-control" placeholder="Логин" required
