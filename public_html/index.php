@@ -3,14 +3,13 @@
 /**
  * index.php — лендинг проекта на корне сайта (/).
  *
- * Назначение: описание платформы, быстрый старт, ссылки на API и админ-панель.
+ * Назначение: презентация платформы для заказчиков и конечных пользователей.
  */
 
 try {
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $baseUrl = $scheme . '://' . $host;
-    $apiBase = $baseUrl . '/api/v1';
     $cssFile = __DIR__ . '/assets/css/landing.css';
 
     http_response_code(200);
@@ -27,8 +26,8 @@ try {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Identity — REST API и админ-панель для авторизации и управления пользователями мобильного приложения.">
-  <title>Identity — API и админ-панель</title>
+  <meta name="description" content="Identity — безопасная авторизация и управление пользователями для вашего мобильного приложения.">
+  <title>Identity — платформа авторизации</title>
   <style><?php if (is_file($cssFile)) { readfile($cssFile); } ?></style>
 </head>
 <body>
@@ -41,180 +40,165 @@ try {
         <span>Identity Platform</span>
       </div>
       <nav class="nav">
-        <a href="#about">О проекте</a>
-        <a href="#start">Быстрый старт</a>
-        <a href="#api">API</a>
-        <a href="#admin">Админка</a>
+        <a href="#about">О сервисе</a>
+        <a href="#benefits">Преимущества</a>
+        <a href="#how">Как это работает</a>
+        <a href="/doc.php">Документация</a>
       </nav>
-      <a class="btn btn-primary" href="/admin/login">Войти в панель</a>
+      <a class="btn btn-primary" href="/admin/login">Войти</a>
     </header>
 
-    <section class="hero">
+    <section class="hero hero-home">
       <div>
-        <div class="eyebrow">Backend + Admin для мобильных приложений</div>
-        <h1><span>Авторизация</span> и управление пользователями в одном месте</h1>
+        <div class="eyebrow">Платформа для вашего мобильного продукта</div>
+        <h1>Безопасный вход и <span>управление пользователями</span> без лишней сложности</h1>
         <p class="lead">
-          Готовый REST API на PHP (Slim) для iOS/Android и веб-админка для модераторов.
-          Регистрация, вход, роли, профили и список пользователей — из коробки.
+          Identity помогает запустить мобильное приложение с готовой системой регистрации,
+          авторизации и личных профилей. Ваши пользователи входят за секунды — вы управляете
+          доступом из удобной веб-панели.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="/admin/login">Открыть админ-панель</a>
-          <a class="btn btn-secondary" href="<?= htmlspecialchars($apiBase) ?>/db-check">Проверить API</a>
-          <a class="btn btn-ghost" href="#start">Быстрый старт</a>
+          <a class="btn btn-primary" href="/admin/login">Войти в панель</a>
+          <a class="btn btn-secondary" href="#how">Узнать, как это работает</a>
         </div>
         <div class="status-row">
-          <span class="status-pill"><span class="status-dot"></span> Сервис доступен</span>
-          <span>Base URL: <code><?= htmlspecialchars($apiBase) ?></code></span>
+          <span class="status-pill"><span class="status-dot"></span> Сервис работает</span>
+          <span>Подходит для iOS, Android и веб-клиентов</span>
         </div>
       </div>
 
-      <div class="hero-card">
-        <pre><code>// Мобильное приложение — вход пользователя
-POST <?= htmlspecialchars($apiBase) ?>/user/login
-Content-Type: application/json
-
-{
-  "login": "user@example.com",
-  "password": "secret123"
-}
-
-// Ответ
-{
-  "accessToken": "…",
-  "tokenType": "Bearer",
-  "role": 10,
-  "roleLabel": "Пользователь"
-}</code></pre>
+      <div class="hero-card hero-card-visual">
+        <div class="visual-stack">
+          <div class="visual-item">
+            <span class="visual-icon">📱</span>
+            <div>
+              <strong>Мобильное приложение</strong>
+              <p>Регистрация и вход пользователей</p>
+            </div>
+          </div>
+          <div class="visual-item">
+            <span class="visual-icon">🔐</span>
+            <div>
+              <strong>Защищённый доступ</strong>
+              <p>Роли, токены и личные профили</p>
+            </div>
+          </div>
+          <div class="visual-item">
+            <span class="visual-icon">🖥</span>
+            <div>
+              <strong>Панель управления</strong>
+              <p>Модерация и администрирование</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="section" id="about">
-      <h2>Что входит в проект</h2>
-      <p class="section-lead">Три части на одном домене: лендинг, REST API и панель администратора.</p>
+      <h2>Что такое Identity</h2>
+      <p class="section-lead">
+        Это готовая платформа, которая берёт на себя всё, что связано с учётными записями
+        в вашем цифровом продукте — от первого входа до управления командой и пользователями.
+      </p>
       <div class="cards">
         <article class="card">
-          <div class="card-icon blue">⚡</div>
-          <h3>REST API</h3>
-          <p>Slim + MySQL. JSON-эндпоинты для регистрации, логина, профилей и управления пользователями.</p>
+          <div class="card-icon blue">👤</div>
+          <h3>Для пользователей</h3>
+          <p>Быстрая регистрация, удобный вход и личный профиль в мобильном приложении.</p>
         </article>
         <article class="card">
-          <div class="card-icon violet">🛡</div>
-          <h3>Роли и доступ</h3>
-          <p>Guest, User, Moderator, Admin. Bearer-токены и middleware для защищённых маршрутов.</p>
+          <div class="card-icon violet">🏢</div>
+          <h3>Для заказчика</h3>
+          <p>Готовое решение вместо разработки авторизации с нуля — быстрее выход на рынок.</p>
         </article>
         <article class="card">
-          <div class="card-icon green">📱</div>
-          <h3>Для мобильного app</h3>
-          <p>Клиент сохраняет <code>accessToken</code> и передаёт <code>Authorization: Bearer …</code> в каждом запросе.</p>
+          <div class="card-icon green">⚙️</div>
+          <h3>Для команды проекта</h3>
+          <p>Веб-панель для просмотра пользователей, ролей и контроля доступа.</p>
         </article>
       </div>
     </section>
 
-    <section class="section" id="start">
-      <h2>Быстрый старт</h2>
-      <p class="section-lead">За несколько шагов можно поднять backend локально или на хостинге.</p>
-      <div class="steps">
+    <section class="section" id="benefits">
+      <h2>Почему это удобно</h2>
+      <p class="section-lead">Сервис закрывает типовые задачи, с которыми сталкивается каждый мобильный продукт.</p>
+      <div class="cards">
+        <article class="card">
+          <div class="card-icon green">✓</div>
+          <h3>Быстрый запуск</h3>
+          <p>Не нужно месяцами проектировать и тестировать собственную систему входа.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon blue">✓</div>
+          <h3>Надёжность</h3>
+          <p>Централизованное хранение учётных записей и разграничение прав доступа.</p>
+        </article>
+        <article class="card">
+          <div class="card-icon violet">✓</div>
+          <h3>Масштабируемость</h3>
+          <p>Подходит для MVP, пилотного запуска и дальнейшего роста аудитории.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <h2>Как это работает</h2>
+      <p class="section-lead">Три простых шага — без технических деталей.</p>
+      <div class="steps steps-home">
         <article class="step">
           <div class="step-num">1</div>
-          <h3>Клонировать</h3>
-          <p>Репозиторий с GitHub на сервер или локально.</p>
-          <code>git clone … && composer install</code>
+          <h3>Пользователь открывает приложение</h3>
+          <p>Регистрируется или входит по логину и паролю — всё происходит внутри вашего продукта.</p>
         </article>
         <article class="step">
           <div class="step-num">2</div>
-          <h3>Настроить БД</h3>
-          <p>Создать <code>config/db.local.php</code> и выполнить SQL из <code>sql/</code>.</p>
-          <code>curl <?= htmlspecialchars($apiBase) ?>/db-check</code>
+          <h3>Identity обрабатывает доступ</h3>
+          <p>Платформа проверяет учётные данные, выдаёт доступ и сохраняет профиль пользователя.</p>
         </article>
         <article class="step">
           <div class="step-num">3</div>
-          <h3>Запустить</h3>
-          <p>Document root → <code>public_html</code>. Лендинг, API и админка на одном домене.</p>
-          <code>php -S localhost:8080 -t public_html</code>
+          <h3>Вы управляете из панели</h3>
+          <p>Администраторы и модераторы видят пользователей, роли и могут управлять доступом.</p>
         </article>
-        <article class="step">
-          <div class="step-num">4</div>
-          <h3>Подключить app</h3>
-          <p>В мобильном клиенте укажите base URL API и используйте login/registration.</p>
-          <code><?= htmlspecialchars($apiBase) ?></code>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="api">
-      <h2>API для мобильного приложения</h2>
-      <p class="section-lead">Основные эндпоинты. Полная документация — в <code>docs/API_DOCUMENTATION.md</code>.</p>
-      <div class="endpoints">
-        <div class="endpoint-group">
-          <h3>Публичные</h3>
-          <div class="endpoint">
-            <span class="method post">POST</span>
-            <div><code>/api/v1/user/registration</code><br><span>Регистрация нового пользователя</span></div>
-          </div>
-          <div class="endpoint">
-            <span class="method post">POST</span>
-            <div><code>/api/v1/user/login</code><br><span>Вход, выдача accessToken</span></div>
-          </div>
-          <div class="endpoint">
-            <span class="method get">GET</span>
-            <div><code>/api/v1/db-check</code><br><span>Проверка подключения к БД</span></div>
-          </div>
-        </div>
-        <div class="endpoint-group">
-          <h3>С Bearer-токеном</h3>
-          <div class="endpoint">
-            <span class="method get">GET</span>
-            <div><code>/api/v1/me</code><br><span>Проверка авторизации</span></div>
-          </div>
-          <div class="endpoint">
-            <span class="method get">GET</span>
-            <div><code>/api/v1/me/profile</code><br><span>Свой профиль</span></div>
-          </div>
-          <div class="endpoint">
-            <span class="method put">PUT</span>
-            <div><code>/api/v1/me/profile</code><br><span>Обновить имя, телефон, аватар</span></div>
-          </div>
-          <div class="endpoint">
-            <span class="method get">GET</span>
-            <div><code>/api/v1/user/list</code><br><span>Список пользователей (Moderator+)</span></div>
-          </div>
-        </div>
       </div>
 
       <div class="cta">
         <div>
-          <h3>Интеграция в мобильный клиент</h3>
-          <p>После login сохраняйте токен и добавляйте заголовок <code>Authorization: Bearer &lt;token&gt;</code> ко всем защищённым запросам.</p>
+          <h3>Нужны технические детали?</h3>
+          <p>Для разработчиков и интеграторов — отдельная страница с описанием API, эндпоинтов и админ-панели.</p>
         </div>
-        <a class="btn btn-primary" href="<?= htmlspecialchars($apiBase) ?>/db-check">Проверить API</a>
+        <a class="btn btn-primary" href="/doc.php">Открыть документацию</a>
       </div>
     </section>
 
-    <section class="section" id="admin">
-      <h2>Панель администратора</h2>
-      <p class="section-lead">Веб-интерфейс на AdminLTE для модераторов и администраторов. Работает через тот же REST API.</p>
+    <section class="section" id="contact">
+      <h2>Для кого этот сервис</h2>
+      <p class="section-lead">Identity подойдёт, если вы запускаете или развиваете мобильный продукт и хотите не отвлекаться на инфраструктуру входа.</p>
       <div class="cards">
         <article class="card">
-          <div class="card-icon violet">🔐</div>
-          <h3>Вход</h3>
-          <p><a href="/admin/login">/admin/login</a> — авторизация через API, токен хранится в PHP-сессии.</p>
+          <div class="card-icon blue">🚀</div>
+          <h3>Стартапы и MVP</h3>
+          <p>Быстро проверить гипотезу и вывести приложение к первым пользователям.</p>
         </article>
         <article class="card">
-          <div class="card-icon blue">👥</div>
-          <h3>Пользователи</h3>
-          <p><a href="/admin/users">/admin/users</a> — список, роли, удаление (для Admin).</p>
+          <div class="card-icon violet">📲</div>
+          <h3>Мобильные команды</h3>
+          <p>Сфокусироваться на UX приложения, а авторизацию доверить готовой платформе.</p>
         </article>
         <article class="card">
-          <div class="card-icon green">📊</div>
-          <h3>Дашборд</h3>
-          <p><a href="/admin">/admin</a> — сводка и быстрые ссылки после входа.</p>
+          <div class="card-icon green">🤝</div>
+          <h3>Заказчики и агентства</h3>
+          <p>Понятный сервис с веб-панелью — удобно показывать и передавать в эксплуатацию.</p>
         </article>
       </div>
     </section>
 
     <footer class="site-footer">
-      <div>Identity Platform · REST API + Admin Panel · PHP <?= PHP_VERSION ?></div>
-      <div style="margin-top:0.35rem;">Домен: <?= htmlspecialchars($baseUrl) ?> · API: <?= htmlspecialchars($apiBase) ?></div>
+      <div>Identity Platform · Авторизация и управление пользователями</div>
+      <div style="margin-top:0.35rem;">
+        <a href="/doc.php" style="color:#93c5fd;">Документация для разработчиков</a>
+        · <a href="/admin/login" style="color:#93c5fd;">Вход в панель</a>
+      </div>
     </footer>
   </div>
 </body>
