@@ -9,7 +9,7 @@
 declare(strict_types=1);
 
 return [
-    'name' => 'CMS Admin',
+    'name' => 'Quokka Admin',
     'debug' => true,
     'timezone' => 'Europe/Moscow',
 ];

@@ -44,7 +44,11 @@ final class Router
 
         if ($route === null) {
             http_response_code(404);
-            View::render('errors/404', [], 'guest');
+            View::render('errors/404', [
+                'title' => 'Страница не найдена',
+                'guestBodyClass' => 'login-page quokka-login',
+                'viewFile' => BASE_PATH . '/views/errors/404.php',
+            ], 'guest');
             return;
         }
 

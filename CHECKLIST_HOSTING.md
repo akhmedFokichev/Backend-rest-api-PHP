@@ -26,7 +26,8 @@ slim/                          ← папка проекта
 | `/api/v1/*` | REST API (Slim) |
 | `/admin` | админ-панель |
 
-После `git pull` на сервере создайте symlink для статики админки (если его нет):
+После `git pull` статика админки (`/admin/assets/*`) отдаётся через PHP автоматически.
+Symlink нужен только при отдельном запуске без bootstrap:
 
 ```bash
 cd public_html/admin

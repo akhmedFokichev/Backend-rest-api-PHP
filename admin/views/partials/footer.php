@@ -2,9 +2,13 @@
 /**
  * footer.php — подвал layout админки.
  *
- * Назначение: копирайт и версия внизу страницы.
+ * Назначение: копирайт и ссылки внизу страницы.
  */
 ?>
 <footer class="main-footer">
-  <strong>CMS Admin</strong> — frontend only (API on Slim)
+  <div>
+    <strong>Quokka</strong> — панель управления
+    · <a href="/">Сайт</a>
+    · <a href="/doc.php">Документация</a>
+  </div>
 </footer>

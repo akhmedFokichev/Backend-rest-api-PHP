@@ -1,10 +1,19 @@
 /**
- * app.css — дополнительные стили админ-панели.
+ * app.css — стили Quokka Admin поверх AdminLTE.
  *
- * Назначение: индикатор mock-режима и мелкие правки поверх AdminLTE.
+ * Назначение: брендинг, sidebar, login, карточки и таблицы.
  */
+
+:root {
+  --id-accent: #3b82f6;
+  --id-accent-2: #8b5cf6;
+  --id-sidebar: #0f172a;
+  --id-sidebar-hover: #1e293b;
+}
+
+/* ——— Mock mode ——— */
 .mock-mode .main-header::before {
-  content: 'MOCK';
+  content: 'DEMO';
   position: absolute;
   top: 8px;
   left: 50%;
@@ -20,8 +29,335 @@
 
 .main-header {
   position: relative;
+  border-bottom: 1px solid #e9ecef;
 }
 
-.login-page {
-  background: #f4f6f9;
+/* ——— Sidebar ——— */
+.main-sidebar.sidebar-dark-primary {
+  background: var(--id-sidebar);
+}
+
+.main-sidebar .brand-link {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.9rem 1rem;
+}
+
+.brand-quokka {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #fff;
+}
+
+.brand-quokka:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.brand-quokka-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--id-accent), var(--id-accent-2));
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.brand-quokka-text {
+  line-height: 1.2;
+}
+
+.brand-quokka-text strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.brand-quokka-text span {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.sidebar-user-panel {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  margin-top: auto;
+}
+
+.sidebar-user-panel .user-name {
+  color: #f1f5f9;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  word-break: break-all;
+}
+
+.sidebar-user-panel .user-role {
+  font-size: 0.75rem;
+}
+
+.nav-sidebar .nav-link {
+  border-radius: 10px;
+  margin: 0.15rem 0.5rem;
+}
+
+.nav-sidebar .nav-link.active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(139, 92, 246, 0.25)) !important;
+}
+
+/* ——— Login ——— */
+.login-page.quokka-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.2), transparent 30%),
+    radial-gradient(circle at 85% 10%, rgba(139, 92, 246, 0.18), transparent 28%),
+    #070b14;
+}
+
+.login-page.quokka-login .login-box {
+  width: min(420px, calc(100% - 2rem));
+}
+
+.login-page.quokka-login .login-logo {
+  margin-bottom: 1.25rem;
+}
+
+.login-page.quokka-login .login-logo a {
+  color: #f1f5f9;
+  text-decoration: none;
+}
+
+.login-page.quokka-login .login-logo .brand-quokka {
+  justify-content: center;
+}
+
+.login-page.quokka-login .card {
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  background: #111827;
+  color: #e2e8f0;
+}
+
+.login-page.quokka-login .login-card-body {
+  padding: 2rem;
+}
+
+.login-page.quokka-login .login-box-msg {
+  color: #94a3b8;
+  margin-bottom: 1.5rem;
+}
+
+.login-page.quokka-login .form-control {
+  background: #0b1220;
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #f1f5f9;
+}
+
+.login-page.quokka-login .form-control:focus {
+  background: #0b1220;
+  border-color: var(--id-accent);
+  color: #f1f5f9;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.2);
+}
+
+.login-page.quokka-login .input-group-text {
+  background: #1a2234;
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+}
+
+.login-page.quokka-login .btn-primary {
+  background: linear-gradient(135deg, var(--id-accent), #2563eb);
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+}
+
+.login-page.quokka-login .btn-primary:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.login-page.quokka-login .login-footer {
+  text-align: center;
+  margin-top: 1.25rem;
+}
+
+.login-page.quokka-login .login-footer a {
+  color: #93c5fd;
+  font-size: 0.9rem;
+}
+
+/* ——— Content ——— */
+.content-header h1 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+.breadcrumb-bar {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+/* ——— Dashboard cards ——— */
+.stat-card {
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.stat-card .inner h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.stat-card.bg-gradient-primary {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+}
+
+.stat-card.bg-gradient-violet {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+}
+
+.stat-card.bg-gradient-success {
+  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+}
+
+.welcome-card {
+  border-radius: 16px;
+  border: 1px solid #e9ecef;
+}
+
+.welcome-card .card-header {
+  background: #fff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  height: 100%;
+}
+
+.quick-action:hover {
+  text-decoration: none;
+  color: inherit;
+  border-color: #bfdbfe;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.quick-action-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.quick-action-icon.violet {
+  background: rgba(139, 92, 246, 0.12);
+  color: #7c3aed;
+}
+
+.quick-action-icon.green {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+}
+
+.quick-action strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.quick-action span {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+/* ——— Users table ——— */
+.users-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.users-loading {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #6c757d;
+}
+
+.users-loading .spinner-border {
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.role-badge-admin { background: #dc3545; }
+.role-badge-moderator { background: #fd7e14; }
+.role-badge-user { background: #17a2b8; }
+.role-badge-guest { background: #6c757d; }
+
+.table-users .btn-delete {
+  padding: 0.2rem 0.45rem;
+}
+
+/* ——— Navbar user ——— */
+.navbar-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #f8fafc;
+  border: 1px solid #e9ecef;
+}
+
+.navbar-user-chip .role-pill {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-weight: 600;
+}
+
+/* ——— Footer ——— */
+.main-footer {
+  border-top: 1px solid #e9ecef;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.main-footer a {
+  color: #3b82f6;
 }

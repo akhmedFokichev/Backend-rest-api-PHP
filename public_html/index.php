@@ -26,8 +26,8 @@ try {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Identity — безопасная авторизация и управление пользователями для вашего мобильного приложения.">
-  <title>Identity — платформа авторизации</title>
+  <meta name="description" content="Quokka — безопасная авторизация и управление пользователями для вашего мобильного приложения.">
+  <title>Quokka — платформа авторизации</title>
   <style><?php if (is_file($cssFile)) { readfile($cssFile); } ?></style>
 </head>
 <body>
@@ -36,8 +36,8 @@ try {
   <div class="container">
     <header class="site-header">
       <div class="brand">
-        <div class="brand-mark">ID</div>
-        <span>Identity Platform</span>
+        <div class="brand-mark">QK</div>
+        <span>Quokka</span>
       </div>
       <nav class="nav">
         <a href="#about">О сервисе</a>
@@ -53,7 +53,7 @@ try {
         <div class="eyebrow">Платформа для вашего мобильного продукта</div>
         <h1>Безопасный вход и <span>управление пользователями</span> без лишней сложности</h1>
         <p class="lead">
-          Identity помогает запустить мобильное приложение с готовой системой регистрации,
+          Quokka помогает запустить мобильное приложение с готовой системой регистрации,
           авторизации и личных профилей. Ваши пользователи входят за секунды — вы управляете
           доступом из удобной веб-панели.
         </p>
@@ -95,7 +95,7 @@ try {
     </section>
 
     <section class="section" id="about">
-      <h2>Что такое Identity</h2>
+      <h2>Что такое Quokka</h2>
       <p class="section-lead">
         Это готовая платформа, которая берёт на себя всё, что связано с учётными записями
         в вашем цифровом продукте — от первого входа до управления командой и пользователями.
@@ -152,7 +152,7 @@ try {
         </article>
         <article class="step">
           <div class="step-num">2</div>
-          <h3>Identity обрабатывает доступ</h3>
+          <h3>Quokka обрабатывает доступ</h3>
           <p>Платформа проверяет учётные данные, выдаёт доступ и сохраняет профиль пользователя.</p>
         </article>
         <article class="step">
@@ -173,7 +173,7 @@ try {
 
     <section class="section" id="contact">
       <h2>Для кого этот сервис</h2>
-      <p class="section-lead">Identity подойдёт, если вы запускаете или развиваете мобильный продукт и хотите не отвлекаться на инфраструктуру входа.</p>
+      <p class="section-lead">Quokka подойдёт, если вы запускаете или развиваете мобильный продукт и хотите не отвлекаться на инфраструктуру входа.</p>
       <div class="cards">
         <article class="card">
           <div class="card-icon blue">🚀</div>
@@ -194,7 +194,7 @@ try {
     </section>
 
     <footer class="site-footer">
-      <div>Identity Platform · Авторизация и управление пользователями</div>
+      <div>Quokka · Авторизация и управление пользователями</div>
       <div style="margin-top:0.35rem;">
         <a href="/doc.php" style="color:#93c5fd;">Документация для разработчиков</a>
         · <a href="/admin/login" style="color:#93c5fd;">Вход в панель</a>

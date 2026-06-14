@@ -1,4 +1,4 @@
-# API Documentation
+# Quokka API Documentation
 
 Base URL examples use `https://identity.xsdk.ru/api/v1`.
 

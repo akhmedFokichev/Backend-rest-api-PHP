@@ -6,10 +6,18 @@
  */
 ?>
 <div class="login-box">
-  <div class="login-logo"><b>CMS</b> Admin</div>
+  <div class="login-logo">
+    <a href="/" class="brand-quokka">
+      <span class="brand-quokka-mark">QK</span>
+      <span class="brand-quokka-text">
+        <strong>Quokka</strong>
+        <span>Панель управления</span>
+      </span>
+    </a>
+  </div>
   <div class="card">
     <div class="card-body login-card-body">
-      <p class="login-box-msg">Войдите через Slim API</p>
+      <p class="login-box-msg">Войдите с учётной записью модератора или администратора</p>
 
       <?php if (!empty($error)): ?>
         <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
@@ -18,7 +26,7 @@
       <form action="<?= htmlspecialchars(\App\Core\Url::to('login')) ?>" method="post">
         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf ?? '') ?>">
         <div class="input-group mb-3">
-          <input type="text" name="login" class="form-control" placeholder="Логин" required
+          <input type="text" name="login" class="form-control" placeholder="Логин или email" required
                  autocomplete="username"
                  value="<?= htmlspecialchars($_POST['login'] ?? '') ?>">
           <div class="input-group-append">
@@ -34,14 +42,16 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <button type="submit" class="btn btn-primary btn-block">Войти</button>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i class="fas fa-sign-in-alt mr-1"></i> Войти
+            </button>
           </div>
         </div>
       </form>
 
-      <p class="mt-3 mb-0 text-muted small">
-        API: <code>POST /api/v1/user/login</code> с полями <code>login</code>, <code>password</code>.
-      </p>
+      <div class="login-footer">
+        <a href="/">← На главную страницу</a>
+      </div>
     </div>
   </div>
 </div>

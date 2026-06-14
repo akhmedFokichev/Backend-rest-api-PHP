@@ -18,8 +18,9 @@ final class PageController
     public function dashboard(): void
     {
         View::render('dashboard', [
-            'title' => 'Дашборд',
-            'pageTitle' => 'Дашборд',
+            'title' => 'Главная — Quokka Admin',
+            'pageTitle' => 'Главная',
+            'pageSubtitle' => 'Обзор и быстрые действия',
             'user' => Auth::user(),
             'viewFile' => BASE_PATH . '/views/dashboard.php',
         ]);
@@ -28,8 +29,9 @@ final class PageController
     public function usersIndex(): void
     {
         View::render('users/index', [
-            'title' => 'Пользователи',
+            'title' => 'Пользователи — Quokka Admin',
             'pageTitle' => 'Пользователи',
+            'pageSubtitle' => 'Управление учётными записями',
             'canDelete' => Auth::can('*'),
             'viewFile' => BASE_PATH . '/views/users/index.php',
         ]);

@@ -62,6 +62,39 @@ $router->get(Url::to('users'), [$pages, 'usersIndex'], [$canUsers]);
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
+$assetsPrefix = Url::to('assets/');
+if (str_starts_with($uri, $assetsPrefix)) {
+    $relative = ltrim(substr($uri, strlen($assetsPrefix)), '/');
+    if ($relative === '' || str_contains($relative, '..')) {
+        http_response_code(404);
+        exit;
+    }
+
+    $file = BASE_PATH . '/public/assets/' . $relative;
+    if (!is_file($file)) {
+        http_response_code(404);
+        exit;
+    }
+
+    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    $types = [
+        'css' => 'text/css; charset=utf-8',
+        'js' => 'application/javascript; charset=utf-8',
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'gif' => 'image/gif',
+        'svg' => 'image/svg+xml',
+        'woff' => 'font/woff',
+        'woff2' => 'font/woff2',
+    ];
+
+    header('Content-Type: ' . ($types[$ext] ?? 'application/octet-stream'));
+    header('Cache-Control: public, max-age=86400');
+    readfile($file);
+    exit;
+}
+
 $proxyPrefix = Url::to('api/proxy/');
 if (str_starts_with($uri, $proxyPrefix)) {
     $proxy->handle();

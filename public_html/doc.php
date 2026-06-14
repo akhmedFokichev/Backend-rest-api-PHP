@@ -27,8 +27,8 @@ try {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Документация Identity: REST API, админ-панель и быстрый старт для разработчиков.">
-  <title>Документация — Identity Platform</title>
+  <meta name="description" content="Документация Quokka: REST API, админ-панель и быстрый старт для разработчиков.">
+  <title>Документация — Quokka</title>
   <style><?php if (is_file($cssFile)) { readfile($cssFile); } ?></style>
 </head>
 <body>
@@ -38,8 +38,8 @@ try {
     <header class="site-header">
       <div class="brand">
         <a href="/" class="brand" style="text-decoration:none;">
-          <div class="brand-mark">ID</div>
-          <span>Identity Platform</span>
+          <div class="brand-mark">QK</div>
+          <span>Quokka</span>
         </a>
       </div>
       <nav class="nav">
@@ -218,7 +218,7 @@ Content-Type: application/json
     </section>
 
     <footer class="site-footer">
-      <div>Identity Platform · Документация · PHP <?= PHP_VERSION ?></div>
+      <div>Quokka · Документация · PHP <?= PHP_VERSION ?></div>
       <div style="margin-top:0.35rem;">
         <a href="/" style="color:#93c5fd;">На главную</a>
         · Домен: <?= htmlspecialchars($baseUrl) ?>

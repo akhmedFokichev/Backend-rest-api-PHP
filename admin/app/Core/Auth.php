@@ -82,7 +82,11 @@ final class Auth
 
         if (!self::can($permission)) {
             http_response_code(403);
-            View::render('errors/403', [], 'guest');
+            View::render('errors/403', [
+                'title' => 'Доступ запрещён',
+                'guestBodyClass' => 'login-page quokka-login',
+                'viewFile' => BASE_PATH . '/views/errors/403.php',
+            ], 'guest');
             exit;
         }
     }

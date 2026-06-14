@@ -36,6 +36,17 @@ $user = Auth::user();
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1><?= htmlspecialchars($pageTitle ?? '') ?></h1>
+            <?php if (!empty($pageSubtitle)): ?>
+              <p class="page-subtitle mb-0"><?= htmlspecialchars($pageSubtitle) ?></p>
+            <?php endif; ?>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right breadcrumb-bar">
+              <li class="breadcrumb-item"><a href="<?= htmlspecialchars(Url::to()) ?>">Главная</a></li>
+              <?php if (!empty($pageTitle) && ($pageTitle ?? '') !== 'Главная'): ?>
+              <li class="breadcrumb-item active"><?= htmlspecialchars($pageTitle) ?></li>
+              <?php endif; ?>
+            </ol>
           </div>
         </div>
       </div>

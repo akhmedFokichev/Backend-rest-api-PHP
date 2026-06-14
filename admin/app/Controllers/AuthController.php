@@ -19,9 +19,11 @@ final class AuthController
     public function showLogin(): void
     {
         View::render('auth/login', [
-            'title' => 'Вход',
+            'title' => 'Вход — Quokka Admin',
+            'guestBodyClass' => 'login-page quokka-login',
             'csrf' => Auth::csrfToken(),
             'error' => $_SESSION['login_error'] ?? null,
+            'viewFile' => BASE_PATH . '/views/auth/login.php',
         ], 'guest');
 
         unset($_SESSION['login_error']);
