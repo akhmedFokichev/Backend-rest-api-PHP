@@ -2,100 +2,111 @@
 /**
  * dashboard.php — главная страница админки после входа.
  *
- * Назначение: приветствие, быстрые действия и сводка по роли пользователя.
+ * Назначение: карточки со статистикой платформы.
  */
 
-use App\Core\Auth;
 use App\Core\Url;
 
-$displayName = $user['login'] ?? 'пользователь';
-$roleLabel = $user['roleLabel'] ?? '—';
-$canViewUsers = Auth::can('users.view');
-$canDelete = Auth::can('*');
+$stats = $stats ?? [];
+$canViewUsers = $canViewUsers ?? false;
+
+function statValue(?int $value, bool $canView): string
+{
+    if (!$canView) {
+        return '—';
+    }
+
+    return $value === null ? '—' : (string) $value;
+}
 ?>
 <div class="row">
-  <div class="col-lg-4 col-md-6 mb-3">
-    <div class="small-box stat-card bg-gradient-primary">
-      <div class="inner">
-        <h3><?= htmlspecialchars($displayName) ?></h3>
-        <p>Вы вошли в систему</p>
+  <div class="col-lg-3 col-md-6 mb-3">
+    <?php if ($canViewUsers): ?>
+    <a href="<?= htmlspecialchars(Url::to('users')) ?>" class="stat-card-link">
+    <?php endif; ?>
+      <div class="small-box stat-card bg-gradient-primary">
+        <div class="inner">
+          <h3><?= statValue($stats['usersTotal'] ?? null, $canViewUsers) ?></h3>
+          <p>Пользователей</p>
+        </div>
+        <div class="icon"><i class="fas fa-users"></i></div>
+        <?php if ($canViewUsers): ?>
+        <span class="small-box-footer">Перейти к списку <i class="fas fa-arrow-circle-right"></i></span>
+        <?php endif; ?>
       </div>
-      <div class="icon"><i class="fas fa-user-check"></i></div>
-    </div>
+    <?php if ($canViewUsers): ?>
+    </a>
+    <?php endif; ?>
   </div>
-  <div class="col-lg-4 col-md-6 mb-3">
-    <div class="small-box stat-card bg-gradient-violet">
+
+  <div class="col-lg-3 col-md-6 mb-3">
+    <div class="small-box stat-card bg-gradient-danger">
       <div class="inner">
-        <h3><?= htmlspecialchars($roleLabel) ?></h3>
-        <p>Ваша роль</p>
+        <h3><?= statValue($stats['usersAdmin'] ?? null, $canViewUsers) ?></h3>
+        <p>Администраторов</p>
       </div>
       <div class="icon"><i class="fas fa-user-shield"></i></div>
     </div>
   </div>
-  <div class="col-lg-4 col-md-6 mb-3">
-    <div class="small-box stat-card bg-gradient-success">
+
+  <div class="col-lg-3 col-md-6 mb-3">
+    <div class="small-box stat-card bg-gradient-violet">
       <div class="inner">
-        <h3>Online</h3>
-        <p>Сервис доступен</p>
+        <h3><?= statValue($stats['usersModerator'] ?? null, $canViewUsers) ?></h3>
+        <p>Модераторов</p>
       </div>
-      <div class="icon"><i class="fas fa-check-circle"></i></div>
+      <div class="icon"><i class="fas fa-user-cog"></i></div>
+    </div>
+  </div>
+
+  <div class="col-lg-3 col-md-6 mb-3">
+    <div class="small-box stat-card bg-gradient-info">
+      <div class="inner">
+        <h3><?= statValue($stats['usersRegular'] ?? null, $canViewUsers) ?></h3>
+        <p>Обычных пользователей</p>
+      </div>
+      <div class="icon"><i class="fas fa-user"></i></div>
     </div>
   </div>
 </div>
 
-<div class="card welcome-card mb-4">
-  <div class="card-header">
-    <h3 class="card-title mb-0">Добро пожаловать в Quokka</h3>
-  </div>
-  <div class="card-body">
-    <p class="mb-0">
-      Здесь вы управляете пользователями и доступом к мобильному приложению.
-      <?php if ($canViewUsers): ?>
-        Перейдите в раздел «Пользователи», чтобы просмотреть учётные записи.
-      <?php else: ?>
-        У вашей роли ограниченный доступ — доступен только этот дашборд.
-      <?php endif; ?>
-    </p>
-  </div>
-</div>
-
 <div class="row">
-  <?php if ($canViewUsers): ?>
-  <div class="col-md-4 mb-3">
-    <a href="<?= htmlspecialchars(Url::to('users')) ?>" class="quick-action">
-      <span class="quick-action-icon"><i class="fas fa-users"></i></span>
-      <span>
-        <strong>Пользователи</strong>
-        <span>Список учётных записей и ролей</span>
-      </span>
-    </a>
-  </div>
-  <?php endif; ?>
-
-  <div class="col-md-4 mb-3">
-    <a href="/doc.php" class="quick-action" target="_blank" rel="noopener">
-      <span class="quick-action-icon violet"><i class="fas fa-book"></i></span>
-      <span>
-        <strong>Документация</strong>
-        <span>API и инструкции для разработчиков</span>
-      </span>
-    </a>
+  <div class="col-lg-4 col-md-6 mb-3">
+    <div class="small-box stat-card <?= ($stats['apiOk'] ?? false) ? 'bg-gradient-success' : 'bg-gradient-warning' ?>">
+      <div class="inner">
+        <h3><?= ($stats['apiOk'] ?? false) ? 'OK' : '—' ?></h3>
+        <p><?= ($stats['apiOk'] ?? false) ? 'API и база данных' : 'API недоступен' ?></p>
+      </div>
+      <div class="icon"><i class="fas fa-database"></i></div>
+    </div>
   </div>
 
-  <div class="col-md-4 mb-3">
-    <a href="/" class="quick-action" target="_blank" rel="noopener">
-      <span class="quick-action-icon green"><i class="fas fa-globe"></i></span>
-      <span>
-        <strong>Главный сайт</strong>
-        <span>Открыть публичную страницу</span>
-      </span>
-    </a>
+  <div class="col-lg-4 col-md-6 mb-3">
+    <div class="small-box stat-card bg-gradient-secondary">
+      <div class="inner">
+        <h3><?= htmlspecialchars($user['roleLabel'] ?? '—') ?></h3>
+        <p>Ваша роль</p>
+      </div>
+      <div class="icon"><i class="fas fa-id-badge"></i></div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 col-md-6 mb-3">
+    <div class="small-box stat-card bg-gradient-dark">
+      <div class="inner">
+        <h3><?= htmlspecialchars($user['login'] ?? '—') ?></h3>
+        <p>Текущий аккаунт</p>
+      </div>
+      <div class="icon"><i class="fas fa-user-circle"></i></div>
+    </div>
   </div>
 </div>
 
-<?php if ($canDelete): ?>
-<div class="callout callout-info mt-2">
-  <h5><i class="fas fa-info-circle mr-1"></i> Права администратора</h5>
-  <p class="mb-0">Вы можете удалять пользователей в разделе «Пользователи».</p>
+<?php if (!$canViewUsers): ?>
+<div class="callout callout-warning">
+  <p class="mb-0">
+    <i class="fas fa-lock mr-1"></i>
+    Статистика пользователей доступна модераторам и администраторам.
+  </p>
 </div>
 <?php endif; ?>
