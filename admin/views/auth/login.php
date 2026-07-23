@@ -7,12 +7,9 @@
 ?>
 <div class="login-box">
   <div class="login-logo">
-    <a href="/" class="brand-quokka">
-      <span class="brand-quokka-mark">QK</span>
-      <span class="brand-quokka-text">
-        <strong>Quokka</strong>
-        <span>Панель управления</span>
-      </span>
+    <a href="/">
+      <span class="brand-image brand-image-text elevation-3">QK</span>
+      <span class="brand-text font-weight-light">Quokka</span>
     </a>
   </div>
   <div class="card">
