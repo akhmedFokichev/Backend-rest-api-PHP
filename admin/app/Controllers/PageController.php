@@ -3,99 +3,50 @@
 /**
  * PageController.php — страницы админ-панели.
  *
- * Назначение: дашборд и список пользователей (рендер views).
+ * Назначение: отдаёт SPA-shell; экраны переключает Alpine AppStore без reload.
  */
 
 declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Core\ApiClient;
 use App\Core\Auth;
+use App\Core\Url;
 use App\Core\View;
 
 final class PageController
 {
     public function dashboard(): void
     {
-        View::render('dashboard', [
-            'title' => 'Главная — Quokka Admin',
-            'pageTitle' => 'Главная',
-            'pageSubtitle' => 'Статистика платформы',
-            'user' => Auth::user(),
-            'stats' => $this->fetchDashboardStats(),
-            'canViewUsers' => Auth::can('users.view'),
-            'viewFile' => BASE_PATH . '/views/dashboard.php',
-        ]);
+        $this->renderShell('dashboard');
     }
 
     public function usersIndex(): void
     {
-        View::render('users/index', [
-            'title' => 'Пользователи — Quokka Admin',
-            'pageTitle' => 'Пользователи',
-            'pageSubtitle' => 'Управление учётными записями',
-            'canDelete' => Auth::can('*'),
-            'viewFile' => BASE_PATH . '/views/users/index.php',
-        ]);
+        $this->renderShell('users');
     }
 
-    /** @return array{usersTotal: ?int, usersAdmin: ?int, usersModerator: ?int, usersRegular: ?int, apiOk: ?bool} */
-    private function fetchDashboardStats(): array
+    private function renderShell(string $route): void
     {
-        $stats = [
-            'usersTotal' => null,
-            'usersAdmin' => null,
-            'usersModerator' => null,
-            'usersRegular' => null,
-            'apiOk' => null,
-        ];
+        $isUsers = $route === 'users';
 
-        $client = new ApiClient();
-
-        $dbCheck = $client->request('GET', 'db-check');
-        $stats['apiOk'] = ((int) ($dbCheck['_status'] ?? 0) === 200 && ($dbCheck['ok'] ?? false) === true);
-
-        if (!Auth::can('users.view')) {
-            return $stats;
-        }
-
-        $token = Auth::token();
-        if ($token === null) {
-            return $stats;
-        }
-
-        $response = $client->request('GET', 'user/list', null, $token);
-        if ((int) ($response['_status'] ?? 0) !== 200) {
-            return $stats;
-        }
-
-        $items = $response['items'] ?? [];
-        if (!is_array($items)) {
-            return $stats;
-        }
-
-        $stats['usersTotal'] = count($items);
-        $stats['usersAdmin'] = 0;
-        $stats['usersModerator'] = 0;
-        $stats['usersRegular'] = 0;
-
-        foreach ($items as $item) {
-            if (!is_array($item)) {
-                continue;
-            }
-
-            $role = (int) ($item['role'] ?? 0);
-
-            if ($role >= 100) {
-                $stats['usersAdmin']++;
-            } elseif ($role >= 50) {
-                $stats['usersModerator']++;
-            } elseif ($role >= 10) {
-                $stats['usersRegular']++;
-            }
-        }
-
-        return $stats;
+        View::render('shell', [
+            'title' => $isUsers ? 'Пользователи — Quokka Admin' : 'Главная — Quokka Admin',
+            'pageTitle' => $isUsers ? 'Пользователи' : 'Главная',
+            'pageSubtitle' => $isUsers ? 'Управление учётными записями' : 'Статистика платформы',
+            'initialRoute' => $route,
+            'user' => Auth::user(),
+            'boot' => [
+                'route' => $route,
+                'user' => Auth::user(),
+                'canViewUsers' => Auth::can('users.view'),
+                'canDelete' => Auth::can('*'),
+                'paths' => [
+                    'dashboard' => Url::to(),
+                    'users' => Url::to('users'),
+                ],
+            ],
+            'viewFile' => BASE_PATH . '/views/shell.php',
+        ]);
     }
 }

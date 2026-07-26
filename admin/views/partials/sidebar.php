@@ -3,20 +3,15 @@
 /**
  * sidebar.php — боковое меню админки.
  *
- * Назначение: навигация в разметке AdminLTE 3 (brand, user-panel, treeview).
+ * Назначение: навигация AdminLTE + Alpine AppStore (без reload внутри /admin).
  */
 
 use App\Core\Auth;
 use App\Core\Url;
 
-$currentUri = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '/', '/') ?: '/';
 $user = Auth::user();
 $homeUrl = Url::to();
 $usersUrl = Url::to('users');
-
-$isHome = $currentUri === rtrim($homeUrl, '/') || $currentUri === $homeUrl;
-$isUsers = str_starts_with($currentUri, $usersUrl);
-$isPlatformOpen = $isHome || $isUsers;
 
 $displayName = $user['login'] ?? 'Пользователь';
 $roleLabel = $user['roleLabel'] ?? '';
@@ -24,7 +19,9 @@ $initial = mb_strtoupper(mb_substr($displayName, 0, 1));
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
-  <a href="<?= htmlspecialchars($homeUrl) ?>" class="brand-link">
+  <a href="<?= htmlspecialchars($homeUrl) ?>"
+     class="brand-link"
+     @click.prevent="$store.app.navigate('dashboard')">
     <span class="brand-image brand-image-text elevation-3">QK</span>
     <span class="brand-text font-weight-light">Quokka</span>
   </a>
@@ -37,7 +34,9 @@ $initial = mb_strtoupper(mb_substr($displayName, 0, 1));
         <span class="img-circle elevation-2 user-avatar"><?= htmlspecialchars($initial) ?></span>
       </div>
       <div class="info">
-        <a href="<?= htmlspecialchars($homeUrl) ?>" class="d-block"><?= htmlspecialchars($displayName) ?></a>
+        <a href="<?= htmlspecialchars($homeUrl) ?>"
+           class="d-block"
+           @click.prevent="$store.app.navigate('dashboard')"><?= htmlspecialchars($displayName) ?></a>
         <?php if ($roleLabel !== ''): ?>
           <small class="text-muted d-block"><?= htmlspecialchars($roleLabel) ?></small>
         <?php endif; ?>
@@ -59,10 +58,9 @@ $initial = mb_strtoupper(mb_substr($displayName, 0, 1));
     <!-- Sidebar Menu -->
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        <!-- Add icons to the links using the .nav-icon class
-             with font-awesome or any other icon font library -->
-        <li class="nav-item<?= $isPlatformOpen ? ' menu-open' : '' ?>">
-          <a href="#" class="nav-link<?= $isPlatformOpen ? ' active' : '' ?>">
+        <li class="nav-item menu-open">
+          <a href="#" class="nav-link"
+             :class="{ active: $store.app.route === 'dashboard' || $store.app.route === 'users' }">
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>
               Платформа
@@ -71,14 +69,20 @@ $initial = mb_strtoupper(mb_substr($displayName, 0, 1));
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="<?= htmlspecialchars($homeUrl) ?>" class="nav-link<?= $isHome ? ' active' : '' ?>">
+              <a href="<?= htmlspecialchars($homeUrl) ?>"
+                 class="nav-link"
+                 :class="{ active: $store.app.route === 'dashboard' }"
+                 @click.prevent="$store.app.navigate('dashboard')">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Главная</p>
               </a>
             </li>
             <?php if (Auth::can('users.view')): ?>
             <li class="nav-item">
-              <a href="<?= htmlspecialchars($usersUrl) ?>" class="nav-link<?= $isUsers ? ' active' : '' ?>">
+              <a href="<?= htmlspecialchars($usersUrl) ?>"
+                 class="nav-link"
+                 :class="{ active: $store.app.route === 'users' }"
+                 @click.prevent="$store.app.navigate('users')">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Пользователи</p>
               </a>

@@ -2,7 +2,7 @@
 /**
  * navbar.php — верхняя панель админки.
  *
- * Назначение: логин пользователя, роль и кнопка выхода.
+ * Назначение: заголовок страницы из AppStore, пользователь и выход.
  */
 use App\Core\Url;
 ?>
@@ -12,7 +12,7 @@ use App\Core\Url;
       <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
     </li>
     <li class="nav-item d-none d-md-inline-block">
-      <span class="nav-link text-muted"><?= htmlspecialchars($pageTitle ?? '') ?></span>
+      <span class="nav-link text-muted" x-text="$store.app.pageTitle"><?= htmlspecialchars($pageTitle ?? '') ?></span>
     </li>
   </ul>
 
@@ -20,10 +20,11 @@ use App\Core\Url;
     <li class="nav-item d-none d-sm-inline-block mr-2">
       <span class="navbar-user-chip">
         <i class="fas fa-user-circle text-muted"></i>
-        <span><?= htmlspecialchars($user['login'] ?? '') ?></span>
-        <?php if (!empty($user['roleLabel'])): ?>
-          <span class="role-pill"><?= htmlspecialchars($user['roleLabel']) ?></span>
-        <?php endif; ?>
+        <span x-text="$store.app.user?.login || ''"><?= htmlspecialchars($user['login'] ?? '') ?></span>
+        <span class="role-pill"
+              x-show="$store.app.user?.roleLabel"
+              x-text="$store.app.user?.roleLabel"
+              x-cloak><?= htmlspecialchars($user['roleLabel'] ?? '') ?></span>
       </span>
     </li>
     <li class="nav-item">

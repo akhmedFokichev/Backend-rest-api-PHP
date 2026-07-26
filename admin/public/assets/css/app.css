@@ -11,6 +11,10 @@
   --id-sidebar-hover: #1e293b;
 }
 
+[x-cloak] {
+  display: none !important;
+}
+
 /* ——— Mock mode ——— */
 .mock-mode .main-header::before {
   content: 'DEMO';
