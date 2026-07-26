@@ -1,9 +1,9 @@
 <?php
 
 /**
- * PageController.php — страницы админ-панели.
+ * PageController.php — страницы и HTML-фрагменты админ-панели.
  *
- * Назначение: отдаёт SPA-shell; экраны переключает Alpine AppStore без reload.
+ * Назначение: SPA-shell + fragment-эндпоинты для подгрузки только content.
  */
 
 declare(strict_types=1);
@@ -26,6 +26,16 @@ final class PageController
         $this->renderShell('users');
     }
 
+    public function fragmentDashboard(): void
+    {
+        View::render('screens/dashboard', [], '');
+    }
+
+    public function fragmentUsers(): void
+    {
+        View::render('screens/users', [], '');
+    }
+
     private function renderShell(string $route): void
     {
         $isUsers = $route === 'users';
@@ -44,6 +54,10 @@ final class PageController
                 'paths' => [
                     'dashboard' => Url::to(),
                     'users' => Url::to('users'),
+                ],
+                'fragments' => [
+                    'dashboard' => Url::to('fragment/dashboard'),
+                    'users' => Url::to('fragment/users'),
                 ],
             ],
             'viewFile' => BASE_PATH . '/views/shell.php',

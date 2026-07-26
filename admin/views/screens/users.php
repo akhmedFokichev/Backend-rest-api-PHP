@@ -1,11 +1,11 @@
 <?php
 /**
- * users.php — экран списка пользователей для Alpine AppStore.
+ * users.php — HTML-фрагмент экрана «Пользователи».
  *
- * Назначение: таблица users из $store.app, удаление через API proxy.
+ * Назначение: таблица users; подгружается в #app-content при навигации.
  */
 ?>
-<div x-show="$store.app.route === 'users'" x-cloak>
+<div class="screen-users">
   <div class="card">
     <div class="card-header">
       <h3 class="card-title mb-0"><i class="fas fa-users mr-2 text-primary"></i>Пользователи</h3>

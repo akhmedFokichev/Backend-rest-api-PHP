@@ -1,11 +1,11 @@
 <?php
 /**
- * dashboard.php — экран главной (статистика) для Alpine AppStore.
+ * dashboard.php — HTML-фрагмент экрана «Главная».
  *
- * Назначение: карточки статистики, данные из $store.app.stats.
+ * Назначение: карточки статистики; подгружается в #app-content при навигации.
  */
 ?>
-<div x-show="$store.app.route === 'dashboard'" x-cloak>
+<div class="screen-dashboard">
   <div class="row">
     <div class="col-lg-3 col-md-6 mb-3">
       <template x-if="$store.app.canViewUsers">

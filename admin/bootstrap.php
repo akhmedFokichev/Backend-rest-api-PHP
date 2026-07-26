@@ -58,6 +58,8 @@ $router->get(Url::to('login'), [$auth, 'showLogin'], [$requireGuest]);
 $router->post(Url::to('login'), [$auth, 'login'], [$requireGuest]);
 $router->get(Url::to('logout'), [$auth, 'logout'], [$requireAuth]);
 $router->get(Url::to('users'), [$pages, 'usersIndex'], [$canUsers]);
+$router->get(Url::to('fragment/dashboard'), [$pages, 'fragmentDashboard'], [$requireAuth]);
+$router->get(Url::to('fragment/users'), [$pages, 'fragmentUsers'], [$canUsers]);
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';

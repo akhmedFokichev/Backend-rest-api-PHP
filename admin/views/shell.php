@@ -1,11 +1,14 @@
 <?php
 /**
- * shell.php — контент SPA-оболочки админки на Alpine.js.
+ * shell.php — контейнер контента SPA-админки.
  *
- * Назначение: переключает экраны (dashboard / users) без перезагрузки страницы.
+ * Назначение: пустой #app-content; HTML экрана подгружается через fragment при навигации.
  */
 ?>
-<div>
-  <?php require BASE_PATH . '/views/screens/dashboard.php'; ?>
-  <?php require BASE_PATH . '/views/screens/users.php'; ?>
+<div id="app-content-wrap">
+  <div class="users-loading" x-show="$store.app.contentLoading" x-cloak>
+    <div class="spinner-border text-primary" role="status"></div>
+    <div>Загрузка экрана…</div>
+  </div>
+  <div id="app-content" :class="{ 'd-none': $store.app.contentLoading }"></div>
 </div>
