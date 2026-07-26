@@ -3,7 +3,7 @@
 /**
  * PageController.php — страницы и HTML-фрагменты админ-панели.
  *
- * Назначение: SPA-shell + fragment-эндпоинты для подгрузки только content.
+ * Назначение: SPA-shell + fragment-эндпоинты (screens/<name>/view.php).
  */
 
 declare(strict_types=1);
@@ -28,12 +28,12 @@ final class PageController
 
     public function fragmentDashboard(): void
     {
-        View::render('screens/dashboard', [], '');
+        View::render('screens/dashboard/view', [], '');
     }
 
     public function fragmentUsers(): void
     {
-        View::render('screens/users', [], '');
+        View::render('screens/users/view', [], '');
     }
 
     private function renderShell(string $route): void
@@ -58,6 +58,10 @@ final class PageController
                 'fragments' => [
                     'dashboard' => Url::to('fragment/dashboard'),
                     'users' => Url::to('fragment/users'),
+                ],
+                'viewmodels' => [
+                    'dashboard' => Url::to('screens/dashboard/viewmodel.js'),
+                    'users' => Url::to('screens/users/viewmodel.js'),
                 ],
             ],
             'viewFile' => BASE_PATH . '/views/shell.php',

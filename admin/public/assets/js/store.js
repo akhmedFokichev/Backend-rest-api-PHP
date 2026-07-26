@@ -1,8 +1,9 @@
 /**
- * store.js — Alpine AppStore админки Quokka.
+ * store.js — глобальный AppStore админки Quokka.
  *
- * Назначение: состояние экрана + навигация без reload;
- * HTML content подгружается фрагментами (/admin/fragment/*) при каждой смене route.
+ * Назначение: route, user, права, навигация без reload;
+ * подгружает HTML fragment + screen viewmodel.js для текущего экрана.
+ * Логика конкретного экрана — в admin/views/screens/<name>/viewmodel.js
  */
 document.addEventListener('alpine:init', () => {
   Alpine.store('app', {
@@ -22,25 +23,15 @@ document.addEventListener('alpine:init', () => {
       dashboard: '/admin/fragment/dashboard',
       users: '/admin/fragment/users',
     },
+    viewmodels: {
+      dashboard: '/admin/screens/dashboard/viewmodel.js',
+      users: '/admin/screens/users/viewmodel.js',
+    },
 
     contentLoading: false,
     contentError: null,
     contentRequestId: 0,
-
-    stats: {
-      usersTotal: null,
-      usersAdmin: null,
-      usersModerator: null,
-      usersRegular: null,
-      apiOk: null,
-    },
-    statsLoading: false,
-    statsError: null,
-
-    users: [],
-    usersLoading: false,
-    usersError: null,
-    usersLoaded: false,
+    loadedScripts: {},
 
     initFromBoot(boot) {
       this.user = boot.user || null;
@@ -48,6 +39,7 @@ document.addEventListener('alpine:init', () => {
       this.canDelete = !!boot.canDelete;
       this.paths = Object.assign(this.paths, boot.paths || {});
       this.fragments = Object.assign(this.fragments, boot.fragments || {});
+      this.viewmodels = Object.assign(this.viewmodels, boot.viewmodels || {});
       const route = boot.route || this.routeFromPath(window.location.pathname);
       this.setRoute(route, false);
       this.loadContent(route);
@@ -91,11 +83,36 @@ document.addEventListener('alpine:init', () => {
 
     navigate(route) {
       if (this.route === route && document.getElementById('app-content')?.innerHTML.trim()) {
-        this.ensureData();
+        this.mountScreen(route);
         return;
       }
       this.setRoute(route, true);
       this.loadContent(route);
+    },
+
+    loadScript(url) {
+      if (this.loadedScripts[url]) {
+        return Promise.resolve();
+      }
+
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = url;
+        script.async = false;
+        script.onload = () => {
+          this.loadedScripts[url] = true;
+          resolve();
+        };
+        script.onerror = () => reject(new Error('Не удалось загрузить viewmodel: ' + url));
+        document.head.appendChild(script);
+      });
+    },
+
+    async mountScreen(route) {
+      const vm = window.QuokkaScreenVms && window.QuokkaScreenVms[route];
+      if (vm && typeof vm.mount === 'function') {
+        await vm.mount();
+      }
     },
 
     async loadContent(route) {
@@ -103,6 +120,7 @@ document.addEventListener('alpine:init', () => {
       if (!el) return;
 
       const fragmentUrl = this.fragments[route];
+      const viewmodelUrl = this.viewmodels[route];
       if (!fragmentUrl) {
         this.contentError = 'Неизвестный экран';
         return;
@@ -115,6 +133,10 @@ document.addEventListener('alpine:init', () => {
       try {
         if (window.Alpine && typeof Alpine.destroyTree === 'function') {
           Alpine.destroyTree(el);
+        }
+
+        if (viewmodelUrl) {
+          await this.loadScript(viewmodelUrl);
         }
 
         const response = await fetch(fragmentUrl, {
@@ -149,127 +171,24 @@ document.addEventListener('alpine:init', () => {
           return;
         }
 
+        await this.mountScreen(route);
+
         el.innerHTML = html;
 
         if (window.Alpine && typeof Alpine.initTree === 'function') {
           Alpine.initTree(el);
         }
-
-        await this.ensureData();
       } catch (err) {
         if (requestId !== this.contentRequestId) {
           return;
         }
         this.contentError = err.message || 'Ошибка загрузки экрана';
-        el.innerHTML = '<div class="alert alert-danger">' + (this.contentError) + '</div>';
+        el.innerHTML = '<div class="alert alert-danger">' + this.contentError + '</div>';
       } finally {
         if (requestId === this.contentRequestId) {
           this.contentLoading = false;
         }
       }
-    },
-
-    ensureData() {
-      this.loadStats();
-      if (this.route === 'users') {
-        this.loadUsers(true);
-      }
-    },
-
-    async loadStats() {
-      this.statsLoading = true;
-      this.statsError = null;
-
-      try {
-        const dbCheck = await Api.get('db-check');
-        this.stats.apiOk = !!(dbCheck && dbCheck.ok);
-
-        if (!this.canViewUsers) {
-          this.stats.usersTotal = null;
-          this.stats.usersAdmin = null;
-          this.stats.usersModerator = null;
-          this.stats.usersRegular = null;
-          return;
-        }
-
-        const response = await Api.get('user/list');
-        const items = Array.isArray(response.items) ? response.items : [];
-
-        let usersAdmin = 0;
-        let usersModerator = 0;
-        let usersRegular = 0;
-
-        items.forEach((item) => {
-          const role = Number(item.role || 0);
-          if (role >= 100) usersAdmin += 1;
-          else if (role >= 50) usersModerator += 1;
-          else if (role >= 10) usersRegular += 1;
-        });
-
-        this.stats.usersTotal = items.length;
-        this.stats.usersAdmin = usersAdmin;
-        this.stats.usersModerator = usersModerator;
-        this.stats.usersRegular = usersRegular;
-
-        this.users = items;
-        this.usersLoaded = true;
-      } catch (err) {
-        this.statsError = err.message || 'Не удалось загрузить статистику';
-        this.stats.apiOk = false;
-      } finally {
-        this.statsLoading = false;
-      }
-    },
-
-    async loadUsers(force = false) {
-      if (!this.canViewUsers) return;
-      if (this.usersLoading) return;
-      if (this.usersLoaded && !force) return;
-
-      this.usersLoading = true;
-      this.usersError = null;
-
-      try {
-        const response = await Api.get('user/list');
-        this.users = Array.isArray(response.items) ? response.items : [];
-        this.usersLoaded = true;
-      } catch (err) {
-        this.usersError = err.message || 'Не удалось загрузить пользователей';
-      } finally {
-        this.usersLoading = false;
-      }
-    },
-
-    async refreshUsers() {
-      this.usersLoaded = false;
-      await this.loadUsers(true);
-      await this.loadStats();
-    },
-
-    async deleteUser(id) {
-      if (!this.canDelete) return;
-      if (!confirm('Удалить пользователя #' + id + '?')) return;
-
-      try {
-        await Api.delete('user/' + id);
-        this.users = this.users.filter((u) => String(u.id) !== String(id));
-        await this.loadStats();
-      } catch (err) {
-        this.usersError = err.message || 'Ошибка удаления';
-      }
-    },
-
-    roleBadgeClass(roleLabel) {
-      const label = String(roleLabel || '').toLowerCase();
-      if (label.includes('admin') || label.includes('админ')) return 'role-badge-admin';
-      if (label.includes('moder') || label.includes('модер')) return 'role-badge-moderator';
-      if (label.includes('guest') || label.includes('гост')) return 'role-badge-guest';
-      return 'role-badge-user';
-    },
-
-    formatStat(value) {
-      if (!this.canViewUsers) return '—';
-      return value === null || value === undefined ? '—' : String(value);
     },
   });
 });

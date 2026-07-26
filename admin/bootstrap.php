@@ -97,6 +97,27 @@ if (str_starts_with($uri, $assetsPrefix)) {
     exit;
 }
 
+// ViewModel экранов: /admin/screens/{name}/viewmodel.js → views/screens/{name}/viewmodel.js
+$screensPrefix = Url::to('screens/');
+if (str_starts_with($uri, $screensPrefix)) {
+    if (!preg_match('#^' . preg_quote($screensPrefix, '#') . '([a-z0-9_-]+)/viewmodel\.js$#', $uri, $matches)) {
+        http_response_code(404);
+        exit;
+    }
+
+    $screen = $matches[1];
+    $file = BASE_PATH . '/views/screens/' . $screen . '/viewmodel.js';
+    if (!is_file($file)) {
+        http_response_code(404);
+        exit;
+    }
+
+    header('Content-Type: application/javascript; charset=utf-8');
+    header('Cache-Control: public, max-age=60');
+    readfile($file);
+    exit;
+}
+
 $proxyPrefix = Url::to('api/proxy/');
 if (str_starts_with($uri, $proxyPrefix)) {
     $proxy->handle();

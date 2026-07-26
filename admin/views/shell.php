@@ -2,7 +2,11 @@
 /**
  * shell.php — контейнер контента SPA-админки.
  *
- * Назначение: пустой #app-content; HTML экрана подгружается через fragment при навигации.
+ * Назначение: пустой #app-content; HTML + viewmodel экрана подгружаются при навигации.
+ * JS:
+ *   - store.js — loadContent() (fragment HTML + screens/<name>/viewmodel.js)
+ *   - app.js — boot AppStore
+ * Экраны: admin/views/screens/<name>/{view.php, viewmodel.js}
  */
 ?>
 <div id="app-content-wrap">
