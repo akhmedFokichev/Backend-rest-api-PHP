@@ -131,9 +131,11 @@ document.addEventListener('alpine:init', () => {
       this.contentError = null;
 
       try {
+        // Сначала убираем старый экран, чтобы он не мелькал во время загрузки
         if (window.Alpine && typeof Alpine.destroyTree === 'function') {
           Alpine.destroyTree(el);
         }
+        el.innerHTML = '';
 
         if (viewmodelUrl) {
           await this.loadScript(viewmodelUrl);
